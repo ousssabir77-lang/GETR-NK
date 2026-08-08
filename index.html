@@ -1,3 +1,4 @@
+Index · HTML
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" id="htmlRoot">
 <head>
@@ -91,6 +92,20 @@
     letter-spacing: 0.5px;
   }
   .header-btns{ position:absolute; top:20px; left:20px; display:flex; gap:8px; align-items:center; }
+  .header-brand{
+    display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
+  }
+  .cafe-titles{ text-align:center; }
+  .cafe-logo-box{
+    width:64px; height:64px; border-radius:18px; overflow:hidden; flex:0 0 auto;
+    background: rgba(244,234,217,0.06); border:1px dashed var(--line);
+    display:flex; align-items:center; justify-content:center; position:relative;
+    animation: popInImg .6s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .cafe-logo-box img{ width:100%; height:100%; object-fit:cover; }
+  .cafe-logo-box.editable{ cursor:pointer; }
+  .cafe-logo-box.dragover{ border-color: var(--gold); background: color-mix(in srgb, var(--gold) 15%, transparent); }
+  .logo-placeholder{ font-size:1.6rem; color:var(--cream-dim); }
   .icon-btn{
     background: var(--surface);
     border: 1px solid var(--line);
@@ -155,6 +170,30 @@
     box-shadow: var(--shadow);
   }
   .cat-btn.active .cup::after{ height:100%; }
+  .cat-btn.hidden-cat{ opacity:0.5; }
+  .cat-thumb{
+    width:22px; height:22px; border-radius:50%; overflow:hidden; flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(244,234,217,0.08); position:relative;
+  }
+  .cat-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .cat-thumb.editable{ cursor:pointer; }
+  .cat-thumb.editable::after{
+    content:'✎'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:0.6rem; background:rgba(0,0,0,0.35); opacity:0; transition: opacity .2s;
+  }
+  .cat-thumb.editable:hover::after{ opacity:1; }
+  .cat-thumb.dragover{ outline:2px solid var(--gold); }
+  .cat-hidden-tag{
+    font-size:0.62rem; font-weight:700; background:rgba(0,0,0,0.35); padding:2px 8px; border-radius:999px;
+  }
+  .cat-mini-actions{ display:flex; gap:4px; }
+  .cat-icon-btn{
+    width:20px; height:20px; border-radius:50%; border:none; cursor:pointer;
+    background: rgba(0,0,0,0.25); color:inherit; font-size:0.68rem;
+    display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+  }
+  .cat-icon-btn:hover{ background: rgba(0,0,0,0.45); }
   .cat-edit-row{
     display:flex; justify-content:center; gap:10px; margin: 6px 0 0;
     max-width:900px; margin-inline:auto; padding: 0 20px;
@@ -292,10 +331,33 @@
     border: 1px solid var(--line);
   }
  
+  @media (max-width:600px){
+    header{ padding: 36px 14px 22px; }
+    main{ padding: 18px 12px; }
+    .cat-strip{ padding: 18px 12px 8px; gap:8px; -webkit-overflow-scrolling:touch; }
+    .cat-edit-row{ padding: 0 12px; flex-wrap:wrap; }
+    .grid{ gap:14px; }
+    .modal{ padding:18px; border-radius:14px; }
+    .field input[type=text], .field textarea{ font-size:16px; }
+    .icon-btn{ width:38px; height:38px; font-size:1rem; }
+    .lang-btn{ height:38px; padding:0 12px; font-size:0.8rem; }
+    .cafe-logo-box{ width:52px; height:52px; border-radius:14px; }
+    .item-actions{ gap:8px; }
+    .mini-btn{ padding:6px 12px; font-size:0.8rem; }
+  }
   @media (max-width:480px){
-    .cafe-name{ font-size:2.2rem; }
+    .cafe-name{ font-size:2rem; }
+    .cafe-tagline{ font-size:0.82rem; }
     .item-card{ flex-direction:column; }
+    .item-img{ width:100%; height:150px; border-radius:14px; }
     .header-btns{ position:static; justify-content:center; margin-bottom:14px; }
+    .header-brand{ gap:10px; }
+    .toast{ font-size:0.82rem; padding:9px 16px; max-width:88vw; text-align:center; }
+  }
+  @media (max-width:360px){
+    .cafe-name{ font-size:1.7rem; }
+    .cat-btn{ padding:8px 12px; font-size:0.85rem; }
+    .modal{ padding:14px; }
   }
 </style>
 </head>
@@ -308,8 +370,13 @@
     <button class="icon-btn" id="themeBtn" title="" style="display:none;">🎨</button>
     <button class="icon-btn" id="lockBtn" title="">🔒</button>
   </div>
-  <div class="cafe-name" id="cafeNameDisplay">GETRÄNK</div>
-  <div class="cafe-tagline" id="cafeTaglineDisplay">نكهة الأصالة في كل رشفة</div>
+  <div class="header-brand" id="headerBrand">
+    <div class="cafe-logo-box" id="cafeLogoBox" style="display:none;"></div>
+    <div class="cafe-titles">
+      <div class="cafe-name" id="cafeNameDisplay">GETRÄNK</div>
+      <div class="cafe-tagline" id="cafeTaglineDisplay">نكهة الأصالة في كل رشفة</div>
+    </div>
+  </div>
 </header>
  
 <div class="admin-banner" id="adminBanner">
@@ -362,6 +429,7 @@
   <div class="modal">
     <h3 id="catModalTitle">اسم القسم</h3>
     <div class="field"><input id="catNameInput" type="text"></div>
+    <div class="hint" id="catImgHint">لإضافة أو تغيير صورة القسم: أغلق هذه النافذة واضغط على أيقونة القسم في الشريط، أو اسحب صورة فوقها.</div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="cancelCatBtn">إلغاء</button>
       <button class="btn btn-primary" id="saveCatBtn">حفظ</button>
@@ -398,11 +466,18 @@
  
 <div class="toast" id="toast"></div>
  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const ADMIN_PASSWORD = "cafe2026";
-const STORAGE_KEY = "cafe-menu-data-v3";
 const LANG_KEY = "cafe-lang-pref";
-
+ 
+/* ---------- Supabase config ---------- */
+const SUPABASE_URL = "https://fxvdlnfhuwygfnrmetdy.supabase.co";
+const SUPABASE_KEY = "sb_publishable_CrFOEfoh0OPYHAZWxg9S3Q_EsFgdVIJ";
+const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const MENU_ROW_ID = 1;
+const IMAGES_BUCKET = "menu-images";
+ 
 /* ---------- i18n ---------- */
 const LANGS = ["ar","fr","en"];
 const LANG_META = {
@@ -411,7 +486,7 @@ const LANG_META = {
   en: { dir:"ltr", short:"EN" }
 };
 let currLang = "ar";
-
+ 
 const UI = {
   ownerLoginTitle: { ar:"دخول المالك", fr:"Connexion propriétaire", en:"Owner Login" },
   appearanceTitle: { ar:"المظهر", fr:"Apparence", en:"Appearance" },
@@ -443,7 +518,14 @@ const UI = {
   availableLabel: { ar:"متوفر ويظهر للزبون", fr:"Disponible et visible par le client", en:"Available and visible to customers" },
   imgHint: { ar:"لإضافة أو تغيير الصورة: أغلق هذه النافذة واسحب الصورة مباشرة فوق صورة الصنف في البطاقة، أو اضغط عليها لاختيار صورة من جهازك.", fr:"Pour ajouter ou changer l'image : fermez cette fenêtre puis glissez une image sur la photo de l'article, ou cliquez dessus pour en choisir une.", en:"To add or change the image: close this window and drag an image onto the item's photo, or click it to pick a file." },
   catModalTitle: { ar:"اسم القسم", fr:"Nom de la catégorie", en:"Category name" },
+  catModalTitleEdit: { ar:"تعديل القسم", fr:"Modifier la catégorie", en:"Edit category" },
   catPlaceholder: { ar:"مثال: قهوة باردة", fr:"ex : Boissons froides", en:"e.g. Cold Drinks" },
+  catImgHint: { ar:"لإضافة أو تغيير صورة القسم: أغلق هذه النافذة واضغط على أيقونة القسم في الشريط، أو اسحب صورة فوقها.", fr:"Pour ajouter ou changer l'image de la catégorie : fermez cette fenêtre puis cliquez sur son icône dans la barre, ou glissez une image dessus.", en:"To add or change the category image: close this window and click its icon in the strip, or drag an image onto it." },
+  editCategory: { ar:"تعديل القسم", fr:"Modifier la catégorie", en:"Edit category" },
+  toggleCategoryVisibility: { ar:"إخفاء / إظهار القسم", fr:"Masquer / afficher la catégorie", en:"Hide / show category" },
+  hiddenTag: { ar:"مخفي", fr:"Masqué", en:"Hidden" },
+  toastCategoryHidden: { ar:"تم إخفاء القسم عن الزبون", fr:"La catégorie a été masquée", en:"Category hidden from customers" },
+  toastCategoryShown: { ar:"القسم ظاهر الآن للزبون", fr:"La catégorie est maintenant visible", en:"Category is now visible to customers" },
   headerModalTitle: { ar:"بيانات المقهى", fr:"Informations du café", en:"Café info" },
   cafeNameLabel: { ar:"اسم المقهى", fr:"Nom du café", en:"Café name" },
   taglineLabel: { ar:"الشعار الفرعي", fr:"Slogan", en:"Tagline" },
@@ -468,7 +550,7 @@ function pick(field){
   if(typeof field === "string") return field;
   return field[currLang] || field.ar || field.fr || field.en || "";
 }
-
+ 
 /* ---------- themes & backgrounds ---------- */
 const THEMES = {
   roast:   { label:{ar:"بني محمص",fr:"Brun torréfié",en:"Roasted Brown"}, bg:"#241712", surface:"#33231a", surface2:"#402c20", cream:"#f4ead9", creamDim:"#c9b8a2", gold:"#cc9c58", rust:"#a9522f" },
@@ -482,7 +564,7 @@ const THEMES = {
   charcoal:{ label:{ar:"رمادي فحمي",fr:"Charbon",en:"Charcoal"}, bg:"#161616", surface:"#212121", surface2:"#2b2b2b", cream:"#f3f1ec", creamDim:"#b5b0a6", gold:"#d4af6a", rust:"#8f5a3c" },
   sahara:  { label:{ar:"رملي صحراوي",fr:"Sable du Sahara",en:"Sahara Sand"}, bg:"#2b2013", surface:"#3d2e1c", surface2:"#4c3a23", cream:"#f7ecd8", creamDim:"#d3bd9b", gold:"#e0a83f", rust:"#b5622e" }
 };
-
+ 
 const BG_PATTERNS = {
   beans:    { label:{ar:"حبوب بن",fr:"Grains de café",en:"Coffee Beans"}, className:"pat-beans", opacity:0.05 },
   none:     { label:{ar:"بدون خلفية",fr:"Aucune",en:"None"}, className:"pat-none", opacity:0 },
@@ -491,18 +573,19 @@ const BG_PATTERNS = {
   zellige:  { label:{ar:"زليج مغربي",fr:"Zellige marocain",en:"Moroccan Zellige"}, className:"pat-zellige", opacity:0.08 },
   waves:    { label:{ar:"أمواج ناعمة",fr:"Vagues douces",en:"Soft Waves"}, className:"pat-waves", opacity:0.06 }
 };
-
+ 
 /* ---------- helper to build a translated item ---------- */
 function I(id, name_ar, name_fr, name_en, price, desc_ar, desc_fr, desc_en){
   return { id, name:{ar:name_ar, fr:name_fr, en:name_en}, desc:{ar:desc_ar||"", fr:desc_fr||"", en:desc_en||""}, price, image:"", available:true };
 }
 function C(id, name_ar, name_fr, name_en, items){
-  return { id, name:{ar:name_ar, fr:name_fr, en:name_en}, items };
+  return { id, name:{ar:name_ar, fr:name_fr, en:name_en}, items, image:"", hidden:false };
 }
-
+ 
 /* ---------- full GETRÄNK menu ---------- */
 const DEFAULT_DATA = {
   cafeName: "GETRÄNK",
+  cafeLogo: "",
   cafeTagline: { ar:"نكهة الأصالة في كل رشفة", fr:"Le goût de l'authenticité à chaque gorgée", en:"The taste of authenticity in every sip" },
   themeId: "sahara",
   bgId: "zellige",
@@ -661,22 +744,23 @@ const DEFAULT_DATA = {
     ])
   ]
 };
-
+ 
 let menuData = null;
 let isAdmin = false;
 let activeCatId = null;
 let editingItem = { catId: null, itemId: null };
-let currentImageTarget = null; // {catId, itemId} for file input
-
+let editingCat = null; // null = adding new category, else id of category being edited
+let currentImageTarget = null; // {type:'item'|'category'|'logo', catId, itemId}
+ 
 const $ = (id) => document.getElementById(id);
-
+ 
 function showToast(msg){
   const el = $("toast");
   el.textContent = msg;
   el.classList.add("show");
   setTimeout(()=> el.classList.remove("show"), 1800);
 }
-
+ 
 function applyTheme(){
   const theme = THEMES[menuData.themeId] || THEMES.roast;
   const root = document.documentElement.style;
@@ -687,13 +771,13 @@ function applyTheme(){
   root.setProperty("--cream-dim", theme.creamDim);
   root.setProperty("--gold", theme.gold);
   root.setProperty("--rust", theme.rust);
-
+ 
   const bg = BG_PATTERNS[menuData.bgId] || BG_PATTERNS.beans;
   const tex = $("bgTexture");
   tex.className = "bg-texture " + bg.className;
   root.setProperty("--tex-opacity", bg.opacity);
 }
-
+ 
 function applyLang(){
   document.documentElement.lang = currLang;
   document.documentElement.dir = LANG_META[currLang].dir;
@@ -718,8 +802,9 @@ function applyLang(){
   $("passHint").textContent = t("passwordHint");
   $("cancelPassBtn").textContent = t("cancel");
   $("confirmPassBtn").textContent = t("login");
-  $("catModalTitle").textContent = t("catModalTitle");
+  $("catModalTitle").textContent = editingCat ? t("catModalTitleEdit") : t("catModalTitle");
   $("catNameInput").placeholder = t("catPlaceholder");
+  $("catImgHint").textContent = t("catImgHint");
   $("cancelCatBtn").textContent = t("cancel");
   $("saveCatBtn").textContent = t("save");
   $("headerModalTitle").textContent = t("headerModalTitle");
@@ -732,25 +817,43 @@ function applyLang(){
   $("bgLabel").textContent = t("bgLabel");
   $("closeThemeBtn").textContent = t("close");
 }
-
+ 
 async function loadLangPref(){
   try{
-    const res = await window.storage.get(LANG_KEY, false);
-    if(res && res.value && LANGS.includes(res.value)) currLang = res.value;
+    const saved = localStorage.getItem(LANG_KEY);
+    if(saved && LANGS.includes(saved)) currLang = saved;
   }catch(e){ /* no preference saved yet */ }
 }
 async function saveLangPref(){
-  try{ await window.storage.set(LANG_KEY, currLang, false); }catch(e){}
+  try{ localStorage.setItem(LANG_KEY, currLang); }catch(e){}
 }
-
+ 
+function normalizeMenuData(md){
+  if(!md.themeId) md.themeId = "sahara";
+  if(!md.bgId) md.bgId = "zellige";
+  if(md.cafeLogo === undefined) md.cafeLogo = "";
+  (md.categories || []).forEach(c=>{
+    if(c.image === undefined) c.image = "";
+    if(c.hidden === undefined) c.hidden = false;
+  });
+  return md;
+}
+ 
+function visibleCategories(){
+  return isAdmin ? menuData.categories : menuData.categories.filter(c=>!c.hidden);
+}
+ 
 async function loadData(){
   await loadLangPref();
   try{
-    const res = await window.storage.get(STORAGE_KEY, true);
-    if(res && res.value){
-      menuData = JSON.parse(res.value);
-      if(!menuData.themeId) menuData.themeId = "sahara";
-      if(!menuData.bgId) menuData.bgId = "zellige";
+    const { data, error } = await sbClient
+      .from("menu_data")
+      .select("data")
+      .eq("id", MENU_ROW_ID)
+      .maybeSingle();
+    if(error) throw error;
+    if(data && data.data && Object.keys(data.data).length){
+      menuData = normalizeMenuData(data.data);
     } else {
       menuData = DEFAULT_DATA;
       await saveData(false);
@@ -759,46 +862,141 @@ async function loadData(){
     menuData = DEFAULT_DATA;
     try{ await saveData(false); }catch(e2){}
   }
-  activeCatId = menuData.categories[0] ? menuData.categories[0].id : null;
+  {
+    const vis = menuData.categories.filter(c=>!c.hidden);
+    activeCatId = vis[0] ? vis[0].id : (menuData.categories[0] ? menuData.categories[0].id : null);
+  }
   applyTheme();
   applyLang();
   render();
+  subscribeToMenuChanges();
 }
-
+ 
 async function saveData(toast=true){
   try{
-    const result = await window.storage.set(STORAGE_KEY, JSON.stringify(menuData), true);
-    if(!result){ showToast(t("toastSaveFailed")); return; }
+    const { error } = await sbClient
+      .from("menu_data")
+      .upsert({ id: MENU_ROW_ID, data: menuData, updated_at: new Date().toISOString() });
+    if(error){ showToast(t("toastSaveFailed")); return; }
     if(toast) showToast(t("toastSaved"));
   }catch(e){
     showToast(t("toastSaveFailedImg"));
   }
 }
-
+ 
+let menuChannel = null;
+function subscribeToMenuChanges(){
+  if(menuChannel) return;
+  menuChannel = sbClient.channel("menu-changes")
+    .on("postgres_changes",
+      { event: "*", schema: "public", table: "menu_data", filter: `id=eq.${MENU_ROW_ID}` },
+      (payload)=>{
+        if(payload.new && payload.new.data){
+          menuData = normalizeMenuData(payload.new.data);
+          const vis = isAdmin ? menuData.categories : menuData.categories.filter(c=>!c.hidden);
+          if(!vis.find(c=>c.id===activeCatId)){
+            activeCatId = vis[0] ? vis[0].id : (menuData.categories[0] ? menuData.categories[0].id : null);
+          }
+          applyTheme();
+          render();
+        }
+      })
+    .subscribe();
+}
+ 
 function uid(prefix){ return prefix + "-" + Math.random().toString(36).slice(2,9); }
-
+ 
 function render(){
   $("cafeNameDisplay").textContent = menuData.cafeName;
   $("cafeTaglineDisplay").textContent = pick(menuData.cafeTagline);
   $("themeBtn").style.display = isAdmin ? "flex" : "none";
+  renderLogo();
   renderCategories();
   renderItems();
 }
-
+ 
+function renderLogo(){
+  const box = $("cafeLogoBox");
+  const hasLogo = !!menuData.cafeLogo;
+  if(!hasLogo && !isAdmin){
+    box.style.display = "none";
+    box.onclick = null;
+    return;
+  }
+  box.style.display = "flex";
+  box.className = "cafe-logo-box" + (isAdmin ? " editable" : "");
+  box.innerHTML = hasLogo
+    ? `<img src="${escapeAttr(menuData.cafeLogo)}" alt="">`
+    : `<span class="logo-placeholder">${isAdmin ? "📷" : "☕"}</span>`;
+  if(isAdmin){
+    const badge = document.createElement("div");
+    badge.className = "img-change-badge";
+    badge.textContent = hasLogo ? "✎" : "+";
+    box.appendChild(badge);
+    box.onclick = ()=> openLogoFilePicker();
+    box.addEventListener("dragover", e=>{ e.preventDefault(); box.classList.add("dragover"); });
+    box.addEventListener("dragleave", ()=> box.classList.remove("dragover"));
+    box.addEventListener("drop", e=>{
+      e.preventDefault();
+      box.classList.remove("dragover");
+      const file = e.dataTransfer.files && e.dataTransfer.files[0];
+      if(file) handleLogoImageFile(file);
+    });
+  } else {
+    box.onclick = null;
+  }
+}
+ 
 function renderCategories(){
   const strip = $("catStrip");
   strip.innerHTML = "";
-  menuData.categories.forEach((cat, idx)=>{
+  const cats = visibleCategories();
+  cats.forEach((cat, idx)=>{
     const btn = document.createElement("button");
-    btn.className = "cat-btn" + (cat.id === activeCatId ? " active" : "");
+    btn.className = "cat-btn" + (cat.id === activeCatId ? " active" : "") + (cat.hidden ? " hidden-cat" : "");
     btn.style.animationDelay = (idx*0.06)+"s";
-    btn.innerHTML = `<span class="cup"></span><span>${escapeHtml(pick(cat.name))}</span>`;
-    btn.onclick = () => { activeCatId = cat.id; render(); };
+    const hasImg = !!cat.image;
+    const thumbClass = "cat-thumb" + (isAdmin ? " editable" : "");
+    const thumbInner = hasImg ? `<img src="${escapeAttr(cat.image)}" alt="">` : `<span class="cup"></span>`;
+    btn.innerHTML = `
+      <span class="${thumbClass}">${thumbInner}</span>
+      <span>${escapeHtml(pick(cat.name))}</span>
+      ${cat.hidden ? `<span class="cat-hidden-tag">${escapeHtml(t("hiddenTag"))}</span>` : ""}
+      ${isAdmin ? `<span class="cat-mini-actions">
+        <button type="button" class="cat-icon-btn cat-edit-btn" title="${escapeAttr(t("editCategory"))}">✎</button>
+        <button type="button" class="cat-icon-btn cat-hide-btn" title="${escapeAttr(t("toggleCategoryVisibility"))}">${cat.hidden ? "👁️" : "🚫"}</button>
+      </span>` : ""}
+    `;
+    btn.onclick = (e)=>{
+      if(e.target.closest(".cat-mini-actions") || e.target.closest(".cat-thumb")) return;
+      activeCatId = cat.id;
+      render();
+    };
+    if(isAdmin){
+      const thumb = btn.querySelector(".cat-thumb");
+      thumb.onclick = (e)=>{ e.stopPropagation(); openCategoryFilePicker(cat.id); };
+      thumb.addEventListener("dragover", e=>{ e.preventDefault(); e.stopPropagation(); thumb.classList.add("dragover"); });
+      thumb.addEventListener("dragleave", ()=> thumb.classList.remove("dragover"));
+      thumb.addEventListener("drop", e=>{
+        e.preventDefault(); e.stopPropagation();
+        thumb.classList.remove("dragover");
+        const file = e.dataTransfer.files && e.dataTransfer.files[0];
+        if(file) handleCategoryImageFile(cat.id, file);
+      });
+      btn.querySelector(".cat-edit-btn").onclick = (e)=>{ e.stopPropagation(); openCatModal(cat.id); };
+      btn.querySelector(".cat-hide-btn").onclick = async (e)=>{
+        e.stopPropagation();
+        cat.hidden = !cat.hidden;
+        render();
+        await saveData();
+        showToast(cat.hidden ? t("toastCategoryHidden") : t("toastCategoryShown"));
+      };
+    }
     strip.appendChild(btn);
   });
   $("catEditRow").style.display = isAdmin ? "flex" : "none";
 }
-
+ 
 function renderItems(){
   const grid = $("itemsGrid");
   grid.innerHTML = "";
@@ -868,12 +1066,12 @@ function renderItems(){
     grid.appendChild(addCard);
   }
 }
-
+ 
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 }
 function escapeAttr(str){ return escapeHtml(str); }
-
+ 
 /* ---- language switcher ---- */
 $("langBtn").onclick = async ()=>{
   const idx = LANGS.indexOf(currLang);
@@ -882,31 +1080,95 @@ $("langBtn").onclick = async ()=>{
   render();
   await saveLangPref();
 };
-
+ 
 /* ---- image upload (drag & drop / file picker) ---- */
 function openFilePicker(catId, itemId){
-  currentImageTarget = { catId, itemId };
+  currentImageTarget = { type:"item", catId, itemId };
+  $("fileInput").value = "";
+  $("fileInput").click();
+}
+function openCategoryFilePicker(catId){
+  currentImageTarget = { type:"category", catId };
+  $("fileInput").value = "";
+  $("fileInput").click();
+}
+function openLogoFilePicker(){
+  currentImageTarget = { type:"logo" };
   $("fileInput").value = "";
   $("fileInput").click();
 }
 $("fileInput").addEventListener("change", (e)=>{
   const file = e.target.files && e.target.files[0];
-  if(file && currentImageTarget){
+  if(!file || !currentImageTarget) return;
+  if(currentImageTarget.type === "item"){
     handleImageFile(currentImageTarget.catId, currentImageTarget.itemId, file);
+  } else if(currentImageTarget.type === "category"){
+    handleCategoryImageFile(currentImageTarget.catId, file);
+  } else if(currentImageTarget.type === "logo"){
+    handleLogoImageFile(file);
   }
 });
-
-function handleImageFile(catId, itemId, file){
+ 
+async function handleImageFile(catId, itemId, file){
   if(!file.type.startsWith("image/")){ showToast(t("toastChooseImage")); return; }
-  resizeImageFile(file, 640, 0.75).then(async dataUrl=>{
+  try{
+    const blob = await resizeImageFile(file, 640, 0.75);
+    const path = `${catId}-${itemId}-${Date.now()}.jpg`;
+    const { error: upErr } = await sbClient.storage.from(IMAGES_BUCKET).upload(path, blob, {
+      contentType: "image/jpeg",
+      upsert: true
+    });
+    if(upErr){ showToast(t("toastImageFailed")); return; }
+    const { data: pub } = sbClient.storage.from(IMAGES_BUCKET).getPublicUrl(path);
     const cat = menuData.categories.find(c=>c.id===catId);
     const item = cat.items.find(i=>i.id===itemId);
-    item.image = dataUrl;
+    item.image = pub.publicUrl;
     render();
     await saveData();
-  }).catch(()=> showToast(t("toastImageFailed")));
+  }catch(e){
+    showToast(t("toastImageFailed"));
+  }
 }
-
+ 
+async function handleCategoryImageFile(catId, file){
+  if(!file.type.startsWith("image/")){ showToast(t("toastChooseImage")); return; }
+  try{
+    const blob = await resizeImageFile(file, 300, 0.8);
+    const path = `cat-${catId}-${Date.now()}.jpg`;
+    const { error: upErr } = await sbClient.storage.from(IMAGES_BUCKET).upload(path, blob, {
+      contentType: "image/jpeg",
+      upsert: true
+    });
+    if(upErr){ showToast(t("toastImageFailed")); return; }
+    const { data: pub } = sbClient.storage.from(IMAGES_BUCKET).getPublicUrl(path);
+    const cat = menuData.categories.find(c=>c.id===catId);
+    cat.image = pub.publicUrl;
+    render();
+    await saveData();
+  }catch(e){
+    showToast(t("toastImageFailed"));
+  }
+}
+ 
+async function handleLogoImageFile(file){
+  if(!file.type.startsWith("image/")){ showToast(t("toastChooseImage")); return; }
+  try{
+    const blob = await resizeImageFile(file, 320, 0.85);
+    const path = `logo-${Date.now()}.jpg`;
+    const { error: upErr } = await sbClient.storage.from(IMAGES_BUCKET).upload(path, blob, {
+      contentType: "image/jpeg",
+      upsert: true
+    });
+    if(upErr){ showToast(t("toastImageFailed")); return; }
+    const { data: pub } = sbClient.storage.from(IMAGES_BUCKET).getPublicUrl(path);
+    menuData.cafeLogo = pub.publicUrl;
+    render();
+    await saveData();
+  }catch(e){
+    showToast(t("toastImageFailed"));
+  }
+}
+ 
 function resizeImageFile(file, maxDim, quality){
   return new Promise((resolve, reject)=>{
     const reader = new FileReader();
@@ -920,7 +1182,9 @@ function resizeImageFile(file, maxDim, quality){
         canvas.width = width; canvas.height = height;
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, width, height);
-        resolve(canvas.toDataURL("image/jpeg", quality));
+        canvas.toBlob((blob)=>{
+          if(blob) resolve(blob); else reject(new Error("toBlob failed"));
+        }, "image/jpeg", quality);
       };
       img.onerror = reject;
       img.src = reader.result;
@@ -929,7 +1193,7 @@ function resizeImageFile(file, maxDim, quality){
     reader.readAsDataURL(file);
   });
 }
-
+ 
 /* ---- item text modal ---- */
 function openItemModal(catId, itemId){
   editingItem = { catId, itemId };
@@ -981,32 +1245,44 @@ async function toggleAvailability(catId, itemId){
   await saveData();
   showToast(item.available ? t("toastItemShown") : t("toastItemHidden"));
 }
-
+ 
 /* ---- category modal ---- */
-$("addCatBtn").onclick = ()=>{
-  $("catNameInput").value = "";
+function openCatModal(catId){
+  editingCat = catId || null;
+  const cat = catId ? menuData.categories.find(c=>c.id===catId) : null;
+  $("catModalTitle").textContent = cat ? t("catModalTitleEdit") : t("catModalTitle");
+  $("catNameInput").value = cat ? pick(cat.name) : "";
   $("catOverlay").classList.add("show");
-};
+}
+$("addCatBtn").onclick = ()=> openCatModal(null);
 $("delCatBtn").onclick = async ()=>{
   if(menuData.categories.length <= 1){ showToast(t("toastCantDeleteLast")); return; }
   menuData.categories = menuData.categories.filter(c=>c.id!==activeCatId);
-  activeCatId = menuData.categories[0].id;
+  const vis = visibleCategories();
+  activeCatId = vis[0] ? vis[0].id : menuData.categories[0].id;
   render();
   await saveData();
 };
-$("cancelCatBtn").onclick = ()=> $("catOverlay").classList.remove("show");
+$("cancelCatBtn").onclick = ()=>{ editingCat = null; $("catOverlay").classList.remove("show"); };
 $("saveCatBtn").onclick = async ()=>{
   const name = $("catNameInput").value.trim();
   if(!name){ showToast(t("toastCatNameRequired")); return; }
-  const nameObj = {}; nameObj[currLang] = name;
-  const newCat = { id: uid("cat"), name: nameObj, items: [] };
-  menuData.categories.push(newCat);
-  activeCatId = newCat.id;
+  if(editingCat){
+    const cat = menuData.categories.find(c=>c.id===editingCat);
+    if(typeof cat.name !== "object") cat.name = {};
+    cat.name[currLang] = name;
+  } else {
+    const nameObj = {}; nameObj[currLang] = name;
+    const newCat = { id: uid("cat"), name: nameObj, items: [], image:"", hidden:false };
+    menuData.categories.push(newCat);
+    activeCatId = newCat.id;
+  }
+  editingCat = null;
   $("catOverlay").classList.remove("show");
   render();
   await saveData();
 };
-
+ 
 /* ---- header modal ---- */
 $("editHeaderBtn").onclick = ()=>{
   $("hNameInput").value = menuData.cafeName;
@@ -1022,7 +1298,7 @@ $("saveHeaderBtn").onclick = async ()=>{
   render();
   await saveData();
 };
-
+ 
 /* ---- appearance modal (colors + background) ---- */
 function renderThemeGrid(){
   const grid = $("themeGrid");
@@ -1066,7 +1342,7 @@ function renderBgGrid(){
 }
 $("themeBtn").onclick = ()=>{ renderThemeGrid(); renderBgGrid(); $("themeOverlay").classList.add("show"); };
 $("closeThemeBtn").onclick = ()=> $("themeOverlay").classList.remove("show");
-
+ 
 /* ---- admin login ---- */
 $("lockBtn").onclick = ()=>{
   if(isAdmin){
@@ -1074,6 +1350,10 @@ $("lockBtn").onclick = ()=>{
     $("lockBtn").classList.remove("active");
     $("lockBtn").textContent = "🔒";
     $("adminBanner").classList.remove("show");
+    const vis = visibleCategories();
+    if(!vis.find(c=>c.id===activeCatId)){
+      activeCatId = vis[0] ? vis[0].id : (menuData.categories[0] ? menuData.categories[0].id : null);
+    }
     render();
     return;
   }
@@ -1096,7 +1376,7 @@ $("confirmPassBtn").onclick = ()=>{
   }
 };
 $("passInput").addEventListener("keydown", e=>{ if(e.key==="Enter") $("confirmPassBtn").click(); });
-
+ 
 loadData();
 </script>
 </body>
