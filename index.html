@@ -1,4 +1,3 @@
-Index · HTML
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" id="htmlRoot">
 <head>
@@ -93,11 +92,13 @@ Index · HTML
   }
   .header-btns{ position:absolute; top:20px; left:20px; display:flex; gap:8px; align-items:center; }
   .header-brand{
-    display:flex; align-items:center; justify-content:center; gap:14px; flex-wrap:wrap;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
   }
-  .cafe-titles{ text-align:center; }
+  .cafe-name-row{
+    display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap;
+  }
   .cafe-logo-box{
-    width:64px; height:64px; border-radius:18px; overflow:hidden; flex:0 0 auto;
+    width:52px; height:52px; border-radius:16px; overflow:hidden; flex:0 0 auto;
     background: rgba(244,234,217,0.06); border:1px dashed var(--line);
     display:flex; align-items:center; justify-content:center; position:relative;
     animation: popInImg .6s cubic-bezier(.2,.8,.2,1) both;
@@ -223,7 +224,7 @@ Index · HTML
     font-size:0.7rem; font-weight:700; padding:3px 9px; border-radius:999px;
   }
   .item-img{
-    width:72px; height:72px; border-radius:12px;
+    width:72px; height:72px; aspect-ratio:1/1; border-radius:12px;
     background: rgba(244,234,217,0.06);
     display:flex; align-items:center; justify-content:center;
     font-size: 1.6rem; flex:0 0 auto; overflow:hidden;
@@ -341,15 +342,14 @@ Index · HTML
     .field input[type=text], .field textarea{ font-size:16px; }
     .icon-btn{ width:38px; height:38px; font-size:1rem; }
     .lang-btn{ height:38px; padding:0 12px; font-size:0.8rem; }
-    .cafe-logo-box{ width:52px; height:52px; border-radius:14px; }
+    .cafe-logo-box{ width:42px; height:42px; border-radius:12px; }
     .item-actions{ gap:8px; }
     .mini-btn{ padding:6px 12px; font-size:0.8rem; }
   }
   @media (max-width:480px){
     .cafe-name{ font-size:2rem; }
     .cafe-tagline{ font-size:0.82rem; }
-    .item-card{ flex-direction:column; }
-    .item-img{ width:100%; height:150px; border-radius:14px; }
+    .item-img{ width:64px; height:64px; border-radius:12px; }
     .header-btns{ position:static; justify-content:center; margin-bottom:14px; }
     .header-brand{ gap:10px; }
     .toast{ font-size:0.82rem; padding:9px 16px; max-width:88vw; text-align:center; }
@@ -371,11 +371,11 @@ Index · HTML
     <button class="icon-btn" id="lockBtn" title="">🔒</button>
   </div>
   <div class="header-brand" id="headerBrand">
-    <div class="cafe-logo-box" id="cafeLogoBox" style="display:none;"></div>
-    <div class="cafe-titles">
+    <div class="cafe-name-row">
+      <div class="cafe-logo-box" id="cafeLogoBox" style="display:none;"></div>
       <div class="cafe-name" id="cafeNameDisplay">GETRÄNK</div>
-      <div class="cafe-tagline" id="cafeTaglineDisplay">نكهة الأصالة في كل رشفة</div>
     </div>
+    <div class="cafe-tagline" id="cafeTaglineDisplay">نكهة الأصالة في كل رشفة</div>
   </div>
 </header>
  
@@ -417,7 +417,6 @@ Index · HTML
   <div class="modal">
     <h3 id="passModalTitle">دخول المالك</h3>
     <div class="field"><label id="passLabel">كلمة السر</label><input id="passInput" type="password" placeholder="••••••"></div>
-    <div class="hint" id="passHint">كلمة السر الافتراضية: cafe2026 — غيّرها من الكود (ADMIN_PASSWORD).</div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="cancelPassBtn">إلغاء</button>
       <button class="btn btn-primary" id="confirmPassBtn">دخول</button>
@@ -468,16 +467,16 @@ Index · HTML
  
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const ADMIN_PASSWORD = "cafe2026";
+const ADMIN_PASSWORD = "ozm.2026";
 const LANG_KEY = "cafe-lang-pref";
- 
+
 /* ---------- Supabase config ---------- */
 const SUPABASE_URL = "https://fxvdlnfhuwygfnrmetdy.supabase.co";
 const SUPABASE_KEY = "sb_publishable_CrFOEfoh0OPYHAZWxg9S3Q_EsFgdVIJ";
 const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const MENU_ROW_ID = 1;
 const IMAGES_BUCKET = "menu-images";
- 
+
 /* ---------- i18n ---------- */
 const LANGS = ["ar","fr","en"];
 const LANG_META = {
@@ -486,7 +485,7 @@ const LANG_META = {
   en: { dir:"ltr", short:"EN" }
 };
 let currLang = "ar";
- 
+
 const UI = {
   ownerLoginTitle: { ar:"دخول المالك", fr:"Connexion propriétaire", en:"Owner Login" },
   appearanceTitle: { ar:"المظهر", fr:"Apparence", en:"Appearance" },
@@ -550,7 +549,7 @@ function pick(field){
   if(typeof field === "string") return field;
   return field[currLang] || field.ar || field.fr || field.en || "";
 }
- 
+
 /* ---------- themes & backgrounds ---------- */
 const THEMES = {
   roast:   { label:{ar:"بني محمص",fr:"Brun torréfié",en:"Roasted Brown"}, bg:"#241712", surface:"#33231a", surface2:"#402c20", cream:"#f4ead9", creamDim:"#c9b8a2", gold:"#cc9c58", rust:"#a9522f" },
@@ -564,7 +563,7 @@ const THEMES = {
   charcoal:{ label:{ar:"رمادي فحمي",fr:"Charbon",en:"Charcoal"}, bg:"#161616", surface:"#212121", surface2:"#2b2b2b", cream:"#f3f1ec", creamDim:"#b5b0a6", gold:"#d4af6a", rust:"#8f5a3c" },
   sahara:  { label:{ar:"رملي صحراوي",fr:"Sable du Sahara",en:"Sahara Sand"}, bg:"#2b2013", surface:"#3d2e1c", surface2:"#4c3a23", cream:"#f7ecd8", creamDim:"#d3bd9b", gold:"#e0a83f", rust:"#b5622e" }
 };
- 
+
 const BG_PATTERNS = {
   beans:    { label:{ar:"حبوب بن",fr:"Grains de café",en:"Coffee Beans"}, className:"pat-beans", opacity:0.05 },
   none:     { label:{ar:"بدون خلفية",fr:"Aucune",en:"None"}, className:"pat-none", opacity:0 },
@@ -573,7 +572,7 @@ const BG_PATTERNS = {
   zellige:  { label:{ar:"زليج مغربي",fr:"Zellige marocain",en:"Moroccan Zellige"}, className:"pat-zellige", opacity:0.08 },
   waves:    { label:{ar:"أمواج ناعمة",fr:"Vagues douces",en:"Soft Waves"}, className:"pat-waves", opacity:0.06 }
 };
- 
+
 /* ---------- helper to build a translated item ---------- */
 function I(id, name_ar, name_fr, name_en, price, desc_ar, desc_fr, desc_en){
   return { id, name:{ar:name_ar, fr:name_fr, en:name_en}, desc:{ar:desc_ar||"", fr:desc_fr||"", en:desc_en||""}, price, image:"", available:true };
@@ -581,7 +580,7 @@ function I(id, name_ar, name_fr, name_en, price, desc_ar, desc_fr, desc_en){
 function C(id, name_ar, name_fr, name_en, items){
   return { id, name:{ar:name_ar, fr:name_fr, en:name_en}, items, image:"", hidden:false };
 }
- 
+
 /* ---------- full GETRÄNK menu ---------- */
 const DEFAULT_DATA = {
   cafeName: "GETRÄNK",
@@ -744,23 +743,23 @@ const DEFAULT_DATA = {
     ])
   ]
 };
- 
+
 let menuData = null;
 let isAdmin = false;
 let activeCatId = null;
 let editingItem = { catId: null, itemId: null };
 let editingCat = null; // null = adding new category, else id of category being edited
 let currentImageTarget = null; // {type:'item'|'category'|'logo', catId, itemId}
- 
+
 const $ = (id) => document.getElementById(id);
- 
+
 function showToast(msg){
   const el = $("toast");
   el.textContent = msg;
   el.classList.add("show");
   setTimeout(()=> el.classList.remove("show"), 1800);
 }
- 
+
 function applyTheme(){
   const theme = THEMES[menuData.themeId] || THEMES.roast;
   const root = document.documentElement.style;
@@ -771,13 +770,13 @@ function applyTheme(){
   root.setProperty("--cream-dim", theme.creamDim);
   root.setProperty("--gold", theme.gold);
   root.setProperty("--rust", theme.rust);
- 
+
   const bg = BG_PATTERNS[menuData.bgId] || BG_PATTERNS.beans;
   const tex = $("bgTexture");
   tex.className = "bg-texture " + bg.className;
   root.setProperty("--tex-opacity", bg.opacity);
 }
- 
+
 function applyLang(){
   document.documentElement.lang = currLang;
   document.documentElement.dir = LANG_META[currLang].dir;
@@ -799,7 +798,6 @@ function applyLang(){
   $("saveItemBtn").textContent = t("save");
   $("passModalTitle").textContent = t("ownerLoginTitle");
   $("passLabel").textContent = t("passwordLabel");
-  $("passHint").textContent = t("passwordHint");
   $("cancelPassBtn").textContent = t("cancel");
   $("confirmPassBtn").textContent = t("login");
   $("catModalTitle").textContent = editingCat ? t("catModalTitleEdit") : t("catModalTitle");
@@ -817,7 +815,7 @@ function applyLang(){
   $("bgLabel").textContent = t("bgLabel");
   $("closeThemeBtn").textContent = t("close");
 }
- 
+
 async function loadLangPref(){
   try{
     const saved = localStorage.getItem(LANG_KEY);
@@ -827,7 +825,7 @@ async function loadLangPref(){
 async function saveLangPref(){
   try{ localStorage.setItem(LANG_KEY, currLang); }catch(e){}
 }
- 
+
 function normalizeMenuData(md){
   if(!md.themeId) md.themeId = "sahara";
   if(!md.bgId) md.bgId = "zellige";
@@ -838,11 +836,11 @@ function normalizeMenuData(md){
   });
   return md;
 }
- 
+
 function visibleCategories(){
   return isAdmin ? menuData.categories : menuData.categories.filter(c=>!c.hidden);
 }
- 
+
 async function loadData(){
   await loadLangPref();
   try{
@@ -855,23 +853,21 @@ async function loadData(){
     if(data && data.data && Object.keys(data.data).length){
       menuData = normalizeMenuData(data.data);
     } else {
-      menuData = DEFAULT_DATA;
+      menuData = normalizeMenuData(DEFAULT_DATA);
       await saveData(false);
     }
   }catch(e){
-    menuData = DEFAULT_DATA;
+    menuData = normalizeMenuData(DEFAULT_DATA);
     try{ await saveData(false); }catch(e2){}
   }
-  {
-    const vis = menuData.categories.filter(c=>!c.hidden);
-    activeCatId = vis[0] ? vis[0].id : (menuData.categories[0] ? menuData.categories[0].id : null);
-  }
+  const vis = menuData.categories.filter(c=>!c.hidden);
+  activeCatId = vis[0] ? vis[0].id : (menuData.categories[0] ? menuData.categories[0].id : null);
   applyTheme();
   applyLang();
   render();
   subscribeToMenuChanges();
 }
- 
+
 async function saveData(toast=true){
   try{
     const { error } = await sbClient
@@ -883,7 +879,7 @@ async function saveData(toast=true){
     showToast(t("toastSaveFailedImg"));
   }
 }
- 
+
 let menuChannel = null;
 function subscribeToMenuChanges(){
   if(menuChannel) return;
@@ -903,9 +899,9 @@ function subscribeToMenuChanges(){
       })
     .subscribe();
 }
- 
+
 function uid(prefix){ return prefix + "-" + Math.random().toString(36).slice(2,9); }
- 
+
 function render(){
   $("cafeNameDisplay").textContent = menuData.cafeName;
   $("cafeTaglineDisplay").textContent = pick(menuData.cafeTagline);
@@ -914,7 +910,7 @@ function render(){
   renderCategories();
   renderItems();
 }
- 
+
 function renderLogo(){
   const box = $("cafeLogoBox");
   const hasLogo = !!menuData.cafeLogo;
@@ -946,7 +942,7 @@ function renderLogo(){
     box.onclick = null;
   }
 }
- 
+
 function renderCategories(){
   const strip = $("catStrip");
   strip.innerHTML = "";
@@ -996,7 +992,7 @@ function renderCategories(){
   });
   $("catEditRow").style.display = isAdmin ? "flex" : "none";
 }
- 
+
 function renderItems(){
   const grid = $("itemsGrid");
   grid.innerHTML = "";
@@ -1066,12 +1062,12 @@ function renderItems(){
     grid.appendChild(addCard);
   }
 }
- 
+
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 }
 function escapeAttr(str){ return escapeHtml(str); }
- 
+
 /* ---- language switcher ---- */
 $("langBtn").onclick = async ()=>{
   const idx = LANGS.indexOf(currLang);
@@ -1080,7 +1076,7 @@ $("langBtn").onclick = async ()=>{
   render();
   await saveLangPref();
 };
- 
+
 /* ---- image upload (drag & drop / file picker) ---- */
 function openFilePicker(catId, itemId){
   currentImageTarget = { type:"item", catId, itemId };
@@ -1108,7 +1104,7 @@ $("fileInput").addEventListener("change", (e)=>{
     handleLogoImageFile(file);
   }
 });
- 
+
 async function handleImageFile(catId, itemId, file){
   if(!file.type.startsWith("image/")){ showToast(t("toastChooseImage")); return; }
   try{
@@ -1129,7 +1125,7 @@ async function handleImageFile(catId, itemId, file){
     showToast(t("toastImageFailed"));
   }
 }
- 
+
 async function handleCategoryImageFile(catId, file){
   if(!file.type.startsWith("image/")){ showToast(t("toastChooseImage")); return; }
   try{
@@ -1149,7 +1145,7 @@ async function handleCategoryImageFile(catId, file){
     showToast(t("toastImageFailed"));
   }
 }
- 
+
 async function handleLogoImageFile(file){
   if(!file.type.startsWith("image/")){ showToast(t("toastChooseImage")); return; }
   try{
@@ -1168,7 +1164,7 @@ async function handleLogoImageFile(file){
     showToast(t("toastImageFailed"));
   }
 }
- 
+
 function resizeImageFile(file, maxDim, quality){
   return new Promise((resolve, reject)=>{
     const reader = new FileReader();
@@ -1193,7 +1189,7 @@ function resizeImageFile(file, maxDim, quality){
     reader.readAsDataURL(file);
   });
 }
- 
+
 /* ---- item text modal ---- */
 function openItemModal(catId, itemId){
   editingItem = { catId, itemId };
@@ -1245,7 +1241,7 @@ async function toggleAvailability(catId, itemId){
   await saveData();
   showToast(item.available ? t("toastItemShown") : t("toastItemHidden"));
 }
- 
+
 /* ---- category modal ---- */
 function openCatModal(catId){
   editingCat = catId || null;
@@ -1282,7 +1278,7 @@ $("saveCatBtn").onclick = async ()=>{
   render();
   await saveData();
 };
- 
+
 /* ---- header modal ---- */
 $("editHeaderBtn").onclick = ()=>{
   $("hNameInput").value = menuData.cafeName;
@@ -1298,7 +1294,7 @@ $("saveHeaderBtn").onclick = async ()=>{
   render();
   await saveData();
 };
- 
+
 /* ---- appearance modal (colors + background) ---- */
 function renderThemeGrid(){
   const grid = $("themeGrid");
@@ -1342,7 +1338,7 @@ function renderBgGrid(){
 }
 $("themeBtn").onclick = ()=>{ renderThemeGrid(); renderBgGrid(); $("themeOverlay").classList.add("show"); };
 $("closeThemeBtn").onclick = ()=> $("themeOverlay").classList.remove("show");
- 
+
 /* ---- admin login ---- */
 $("lockBtn").onclick = ()=>{
   if(isAdmin){
@@ -1376,7 +1372,7 @@ $("confirmPassBtn").onclick = ()=>{
   }
 };
 $("passInput").addEventListener("keydown", e=>{ if(e.key==="Enter") $("confirmPassBtn").click(); });
- 
+
 loadData();
 </script>
 </body>
