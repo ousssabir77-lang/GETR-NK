@@ -205,7 +205,12 @@
   .grid{
     display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
     gap: 18px;
+    transition: transform .2s cubic-bezier(.2,.8,.2,1), opacity .2s cubic-bezier(.2,.8,.2,1);
   }
+  .grid.slide-out-left{ transform: translateX(-26px); opacity:0; }
+  .grid.slide-out-right{ transform: translateX(26px); opacity:0; }
+  .grid.slide-in-left{ transform: translateX(-26px); opacity:0; }
+  .grid.slide-in-right{ transform: translateX(26px); opacity:0; }
   .item-card{
     background: linear-gradient(180deg, var(--surface), var(--surface-2));
     border: 1px solid var(--line);
@@ -236,6 +241,7 @@
   .item-img img{ width:100%; height:100%; object-fit:cover; }
   .item-img.has-img{ border-style:solid; }
   .item-img.dropzone{ cursor:pointer; }
+  .item-img.zoomable{ cursor:zoom-in; }
   .item-img.dragover{ border-color: var(--gold); background: color-mix(in srgb, var(--gold) 15%, transparent); }
   .img-placeholder{ display:flex; flex-direction:column; align-items:center; gap:2px; color:var(--cream-dim); }
   .img-placeholder span{ font-size:1.3rem; }
@@ -280,6 +286,16 @@
     background: var(--surface); border:1px solid var(--line); border-radius:16px;
     padding: 24px; width:100%; max-width: 440px; box-shadow: var(--shadow);
     max-height: 90vh; overflow-y:auto;
+  }
+  .lightbox-content{
+    max-width:92vw; max-height:88vh; border-radius:18px; box-shadow: var(--shadow);
+    animation: popInImg .35s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .lightbox-close{
+    position:absolute; top:16px; inset-inline-end:16px;
+    width:40px; height:40px; border-radius:50%; border:none; cursor:pointer;
+    background: rgba(0,0,0,0.5); color:#fff; font-size:1.2rem;
+    display:flex; align-items:center; justify-content:center;
   }
   .modal h3{ font-family:'Lalezar'; color:var(--gold); font-size:1.5rem; margin-bottom:16px; }
   .field{ margin-bottom:14px; }
@@ -462,6 +478,11 @@
 </div>
  
 <input type="file" id="fileInput" accept="image/*" style="display:none;">
+
+<div class="overlay" id="imgLightbox">
+  <button type="button" class="lightbox-close" id="lightboxClose">✕</button>
+  <img class="lightbox-content" id="lightboxImg" src="" alt="">
+</div>
  
 <div class="toast" id="toast"></div>
  
@@ -522,6 +543,8 @@ const UI = {
   catImgHint: { ar:"لإضافة أو تغيير صورة القسم: أغلق هذه النافذة واضغط على أيقونة القسم في الشريط، أو اسحب صورة فوقها.", fr:"Pour ajouter ou changer l'image de la catégorie : fermez cette fenêtre puis cliquez sur son icône dans la barre, ou glissez une image dessus.", en:"To add or change the category image: close this window and click its icon in the strip, or drag an image onto it." },
   editCategory: { ar:"تعديل القسم", fr:"Modifier la catégorie", en:"Edit category" },
   toggleCategoryVisibility: { ar:"إخفاء / إظهار القسم", fr:"Masquer / afficher la catégorie", en:"Hide / show category" },
+  moveCategoryPrev: { ar:"نقل القسم للخلف", fr:"Déplacer la catégorie vers l'arrière", en:"Move category back" },
+  moveCategoryNext: { ar:"نقل القسم للأمام", fr:"Déplacer la catégorie vers l'avant", en:"Move category forward" },
   hiddenTag: { ar:"مخفي", fr:"Masqué", en:"Hidden" },
   toastCategoryHidden: { ar:"تم إخفاء القسم عن الزبون", fr:"La catégorie a été masquée", en:"Category hidden from customers" },
   toastCategoryShown: { ar:"القسم ظاهر الآن للزبون", fr:"La catégorie est maintenant visible", en:"Category is now visible to customers" },
@@ -840,6 +863,16 @@ function normalizeMenuData(md){
 function visibleCategories(){
   return isAdmin ? menuData.categories : menuData.categories.filter(c=>!c.hidden);
 }
+async function moveCategory(catId, direction){
+  const idx = menuData.categories.findIndex(c=>c.id===catId);
+  if(idx === -1) return;
+  const newIdx = idx + direction;
+  if(newIdx < 0 || newIdx >= menuData.categories.length) return;
+  const [cat] = menuData.categories.splice(idx, 1);
+  menuData.categories.splice(newIdx, 0, cat);
+  render();
+  await saveData();
+}
 
 async function loadData(){
   await loadLangPref();
@@ -959,14 +992,18 @@ function renderCategories(){
       <span>${escapeHtml(pick(cat.name))}</span>
       ${cat.hidden ? `<span class="cat-hidden-tag">${escapeHtml(t("hiddenTag"))}</span>` : ""}
       ${isAdmin ? `<span class="cat-mini-actions">
+        <button type="button" class="cat-icon-btn cat-move-prev-btn" title="${escapeAttr(t("moveCategoryPrev"))}">‹</button>
+        <button type="button" class="cat-icon-btn cat-move-next-btn" title="${escapeAttr(t("moveCategoryNext"))}">›</button>
         <button type="button" class="cat-icon-btn cat-edit-btn" title="${escapeAttr(t("editCategory"))}">✎</button>
         <button type="button" class="cat-icon-btn cat-hide-btn" title="${escapeAttr(t("toggleCategoryVisibility"))}">${cat.hidden ? "👁️" : "🚫"}</button>
       </span>` : ""}
     `;
     btn.onclick = (e)=>{
       if(e.target.closest(".cat-mini-actions") || e.target.closest(".cat-thumb")) return;
-      activeCatId = cat.id;
-      render();
+      if(cat.id === activeCatId) return;
+      const curIdx = cats.findIndex(c=>c.id===activeCatId);
+      const direction = curIdx === -1 ? 1 : (idx > curIdx ? 1 : -1);
+      goToCategory(cat.id, direction);
     };
     if(isAdmin){
       const thumb = btn.querySelector(".cat-thumb");
@@ -980,6 +1017,8 @@ function renderCategories(){
         if(file) handleCategoryImageFile(cat.id, file);
       });
       btn.querySelector(".cat-edit-btn").onclick = (e)=>{ e.stopPropagation(); openCatModal(cat.id); };
+      btn.querySelector(".cat-move-prev-btn").onclick = (e)=>{ e.stopPropagation(); moveCategory(cat.id, -1); };
+      btn.querySelector(".cat-move-next-btn").onclick = (e)=>{ e.stopPropagation(); moveCategory(cat.id, 1); };
       btn.querySelector(".cat-hide-btn").onclick = async (e)=>{
         e.stopPropagation();
         cat.hidden = !cat.hidden;
@@ -1050,6 +1089,10 @@ function renderItems(){
       card.querySelector(".edit-btn").onclick = ()=> openItemModal(cat.id, item.id);
       card.querySelector(".toggle-btn").onclick = ()=> toggleAvailability(cat.id, item.id);
       card.querySelector(".del-btn").onclick = ()=> deleteItem(cat.id, item.id);
+    } else if(hasImg){
+      const imgBox = card.querySelector(".item-img");
+      imgBox.classList.add("zoomable");
+      imgBox.onclick = ()=> openLightbox(item.image);
     }
     grid.appendChild(card);
   });
@@ -1078,6 +1121,74 @@ $("langBtn").onclick = async ()=>{
 };
 
 /* ---- image upload (drag & drop / file picker) ---- */
+/* ---- image lightbox (zoom to view item image) ---- */
+function openLightbox(src){
+  $("lightboxImg").src = src;
+  $("imgLightbox").classList.add("show");
+}
+function closeLightbox(){
+  $("imgLightbox").classList.remove("show");
+  $("lightboxImg").src = "";
+}
+$("imgLightbox").addEventListener("click", (e)=>{
+  if(e.target.id === "imgLightbox") closeLightbox();
+});
+$("lightboxClose").onclick = closeLightbox;
+
+/* ---- swipe between categories (touch gesture) ---- */
+function initSwipeNav(){
+  const area = document.querySelector("main");
+  let startX = 0, startY = 0, tracking = false;
+  area.addEventListener("touchstart", (e)=>{
+    if(e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    tracking = true;
+  }, { passive:true });
+  area.addEventListener("touchend", (e)=>{
+    if(!tracking || !e.changedTouches || e.changedTouches.length !== 1) return;
+    tracking = false;
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    if(Math.abs(dx) < 55 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
+    switchCategoryBySwipe(dx < 0 ? -1 : 1);
+  }, { passive:true });
+}
+let catSwitchAnimating = false;
+function switchCategoryBySwipe(step){
+  if(catSwitchAnimating) return;
+  const vis = visibleCategories();
+  if(vis.length < 2) return;
+  const idx = vis.findIndex(c=>c.id===activeCatId);
+  if(idx === -1) return;
+  const newIdx = idx + step;
+  // no wraparound: stop at the first/last category instead of jumping to an unrelated one
+  if(newIdx < 0 || newIdx >= vis.length) return;
+  goToCategory(vis[newIdx].id, step);
+}
+function goToCategory(catId, direction){
+  if(catId === activeCatId) return;
+  catSwitchAnimating = true;
+  const grid = $("itemsGrid");
+  grid.classList.remove("slide-in-left","slide-in-right");
+  grid.classList.add(direction > 0 ? "slide-out-left" : "slide-out-right");
+  setTimeout(()=>{
+    activeCatId = catId;
+    render();
+    const activeBtn = document.querySelector(".cat-btn.active");
+    if(activeBtn) activeBtn.scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" });
+    const g2 = $("itemsGrid");
+    g2.classList.remove("slide-out-left","slide-out-right");
+    g2.classList.add(direction > 0 ? "slide-in-right" : "slide-in-left");
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        g2.classList.remove("slide-in-right","slide-in-left");
+        catSwitchAnimating = false;
+      });
+    });
+  }, 200);
+}
+
 function openFilePicker(catId, itemId){
   currentImageTarget = { type:"item", catId, itemId };
   $("fileInput").value = "";
@@ -1374,6 +1485,7 @@ $("confirmPassBtn").onclick = ()=>{
 $("passInput").addEventListener("keydown", e=>{ if(e.key==="Enter") $("confirmPassBtn").click(); });
 
 loadData();
+initSwipeNav();
 </script>
 </body>
 </html>
