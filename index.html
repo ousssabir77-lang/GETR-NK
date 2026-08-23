@@ -57,7 +57,7 @@
     background-size: 60px 30px;
   }
   .bg-texture.pat-none{ display:none; }
- 
+
   @keyframes popIn{
     from{ opacity:0; transform: translateY(26px) scale(.94); }
     to{ opacity:1; transform: translateY(0) scale(1); }
@@ -69,7 +69,7 @@
   @media (prefers-reduced-motion: reduce){
     *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; }
   }
- 
+
   header{
     position:relative; z-index:2;
     text-align:center;
@@ -131,7 +131,7 @@
     font-family:'Tajawal';
   }
   .lang-btn:hover{ color:var(--gold); border-color: var(--gold); }
- 
+
   .cat-strip{
     position:relative; z-index:2;
     display:flex; gap:10px; overflow-x:auto;
@@ -199,9 +199,9 @@
     display:flex; justify-content:center; gap:10px; margin: 6px 0 0;
     max-width:900px; margin-inline:auto; padding: 0 20px;
   }
- 
+
   main{ max-width: 900px; margin: 0 auto; padding: 24px 20px; position:relative; z-index:2; }
- 
+
   .grid{
     display:grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
     gap: 18px;
@@ -257,7 +257,7 @@
   .item-name{ font-weight:900; font-size:1.05rem; color:var(--cream); }
   .item-price{ font-family:'Tajawal'; font-weight:900; color: var(--gold); white-space:nowrap; font-size:1.05rem; direction:ltr; }
   .item-desc{ color: var(--cream-dim); font-size:0.85rem; margin-top:4px; line-height:1.5; }
- 
+
   .item-actions{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
   .mini-btn{
     background: rgba(244,234,217,0.08); border:1px solid var(--line); color:var(--cream-dim);
@@ -265,7 +265,7 @@
   }
   .mini-btn:hover{ color: var(--gold); border-color:var(--gold); }
   .mini-btn.danger:hover{ color:#e07856; border-color:#e07856; }
- 
+
   .add-card{
     border: 2px dashed var(--line); border-radius:16px;
     display:flex; align-items:center; justify-content:center;
@@ -274,9 +274,9 @@
     animation: popIn .55s cubic-bezier(.2,.8,.2,1) both;
   }
   .add-card:hover{ color: var(--gold); border-color: var(--gold); }
- 
+
   .empty{ text-align:center; color:var(--cream-dim); padding: 40px 0; }
- 
+
   .overlay{
     position:fixed; inset:0; background:rgba(15,9,6,0.7);
     display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
@@ -300,11 +300,11 @@
   .modal h3{ font-family:'Lalezar'; color:var(--gold); font-size:1.5rem; margin-bottom:16px; }
   .field{ margin-bottom:14px; }
   .field label{ display:block; font-size:0.82rem; color:var(--cream-dim); margin-bottom:6px; font-weight:700; }
-  .field input[type=text], .field textarea{
+  .field input[type=text], .field textarea, .field input[type=password]{
     width:100%; background: rgba(0,0,0,0.2); border:1px solid var(--line); color:var(--cream);
     border-radius:10px; padding:10px 12px; font-family:'Tajawal'; font-size:0.95rem;
   }
-  .field textarea{ resize:vertical; min-height:60px; }
+  .field textarea{ resize:vertical; min-height:50px; }
   .checkbox-row{ display:flex; align-items:center; gap:8px; }
   .checkbox-row input{ width:18px; height:18px; }
   .modal-actions{ display:flex; gap:10px; margin-top:18px; }
@@ -330,7 +330,7 @@
     display:none; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px;
   }
   .admin-banner.show{ display:flex; }
- 
+
   .section-label{ font-weight:900; color:var(--gold); font-size:0.9rem; margin:16px 0 10px; }
   .section-label:first-child{ margin-top:0; }
   .theme-grid, .bg-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:10px; margin-bottom:6px; }
@@ -347,7 +347,17 @@
     background-repeat: repeat; background-size: 20px 20px;
     border: 1px solid var(--line);
   }
- 
+
+  .lang-tabs{ display:flex; gap:6px; margin-bottom:10px; }
+  .lang-tab{
+    flex:1; text-align:center; padding:6px 4px; border-radius:8px; cursor:pointer;
+    font-size:0.75rem; font-weight:900; background: rgba(244,234,217,0.06); color:var(--cream-dim);
+    border:1px solid var(--line);
+  }
+  .lang-tab.filled{ color: var(--gold); border-color: var(--gold); }
+  .lang-field-group{ display:none; }
+  .lang-field-group.active{ display:block; }
+
   @media (max-width:600px){
     header{ padding: 36px 14px 22px; }
     main{ padding: 18px 12px; }
@@ -355,7 +365,7 @@
     .cat-edit-row{ padding: 0 12px; flex-wrap:wrap; }
     .grid{ gap:14px; }
     .modal{ padding:18px; border-radius:14px; }
-    .field input[type=text], .field textarea{ font-size:16px; }
+    .field input[type=text], .field textarea, .field input[type=password]{ font-size:16px; }
     .icon-btn{ width:38px; height:38px; font-size:1rem; }
     .lang-btn{ height:38px; padding:0 12px; font-size:0.8rem; }
     .cafe-logo-box{ width:42px; height:42px; border-radius:12px; }
@@ -379,7 +389,7 @@
 </head>
 <body>
 <div class="bg-texture pat-beans" id="bgTexture"></div>
- 
+
 <header>
   <div class="header-btns">
     <button class="lang-btn" id="langBtn" title="">AR</button>
@@ -394,41 +404,60 @@
     <div class="cafe-tagline" id="cafeTaglineDisplay">نكهة الأصالة في كل رشفة</div>
   </div>
 </header>
- 
+
 <div class="admin-banner" id="adminBanner">
   <span id="adminBannerText">وضع التعديل مفعّل</span>
   <button class="mini-btn" id="editHeaderBtn">تعديل اسم المقهى</button>
 </div>
- 
+
 <div class="cat-strip" id="catStrip"></div>
 <div class="cat-edit-row" id="catEditRow" style="display:none;">
   <button class="mini-btn" id="addCatBtn">+ إضافة قسم</button>
   <button class="mini-btn danger" id="delCatBtn">حذف القسم الحالي</button>
 </div>
- 
+
 <main>
   <div class="grid" id="itemsGrid"></div>
 </main>
- 
+
 <!-- item text modal -->
 <div class="overlay" id="itemOverlay">
   <div class="modal">
     <h3 id="itemModalTitle">تعديل الصنف</h3>
-    <div class="field"><label id="fNameLabel">الاسم</label><input id="fName" type="text"></div>
-    <div class="field"><label id="fDescLabel">الوصف</label><textarea id="fDesc"></textarea></div>
+
+    <div class="lang-tabs" id="itemLangTabs">
+      <div class="lang-tab" data-lang="ar" id="itemTabAr">AR</div>
+      <div class="lang-tab" data-lang="fr" id="itemTabFr">FR</div>
+      <div class="lang-tab" data-lang="en" id="itemTabEn">EN</div>
+    </div>
+
+    <div class="lang-field-group" data-lang="ar">
+      <div class="field"><label id="fNameLabelAr">الاسم (عربي)</label><input id="fNameAr" type="text"></div>
+      <div class="field"><label id="fDescLabelAr">الوصف (عربي)</label><textarea id="fDescAr"></textarea></div>
+    </div>
+    <div class="lang-field-group" data-lang="fr">
+      <div class="field"><label id="fNameLabelFr">الاسم (فرنسي)</label><input id="fNameFr" type="text"></div>
+      <div class="field"><label id="fDescLabelFr">الوصف (فرنسي)</label><textarea id="fDescFr"></textarea></div>
+    </div>
+    <div class="lang-field-group" data-lang="en">
+      <div class="field"><label id="fNameLabelEn">الاسم (إنجليزي)</label><input id="fNameEn" type="text"></div>
+      <div class="field"><label id="fDescLabelEn">الوصف (إنجليزي)</label><textarea id="fDescEn"></textarea></div>
+    </div>
+
     <div class="field"><label id="fPriceLabel">السعر</label><input id="fPrice" type="text"></div>
     <div class="field checkbox-row">
       <input id="fAvailable" type="checkbox" checked>
       <label style="margin:0;" id="fAvailableLabel" for="fAvailable">متوفر ويظهر للزبون</label>
     </div>
     <div class="hint" id="imgHint">لإضافة أو تغيير الصورة: أغلق هذه النافذة واسحب الصورة مباشرة فوق صورة الصنف في البطاقة، أو اضغط عليها لاختيار صورة من جهازك.</div>
+    <div class="hint" id="langHintItem">املأ اسم الصنف بلغة واحدة على الأقل، ويفضل بالثلاث لغات حتى يظهر مترجمًا عند تبديل اللغة.</div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="cancelItemBtn">إلغاء</button>
       <button class="btn btn-primary" id="saveItemBtn">حفظ</button>
     </div>
   </div>
 </div>
- 
+
 <div class="overlay" id="passOverlay">
   <div class="modal">
     <h3 id="passModalTitle">دخول المالك</h3>
@@ -439,31 +468,64 @@
     </div>
   </div>
 </div>
- 
+
 <div class="overlay" id="catOverlay">
   <div class="modal">
     <h3 id="catModalTitle">اسم القسم</h3>
-    <div class="field"><input id="catNameInput" type="text"></div>
+
+    <div class="lang-tabs" id="catLangTabs">
+      <div class="lang-tab" data-lang="ar" id="catTabAr">AR</div>
+      <div class="lang-tab" data-lang="fr" id="catTabFr">FR</div>
+      <div class="lang-tab" data-lang="en" id="catTabEn">EN</div>
+    </div>
+
+    <div class="lang-field-group" data-lang="ar">
+      <div class="field"><label id="catNameLabelAr">اسم القسم (عربي)</label><input id="catNameAr" type="text"></div>
+    </div>
+    <div class="lang-field-group" data-lang="fr">
+      <div class="field"><label id="catNameLabelFr">اسم القسم (فرنسي)</label><input id="catNameFr" type="text"></div>
+    </div>
+    <div class="lang-field-group" data-lang="en">
+      <div class="field"><label id="catNameLabelEn">اسم القسم (إنجليزي)</label><input id="catNameEn" type="text"></div>
+    </div>
+
     <div class="hint" id="catImgHint">لإضافة أو تغيير صورة القسم: أغلق هذه النافذة واضغط على أيقونة القسم في الشريط، أو اسحب صورة فوقها.</div>
+    <div class="hint" id="langHintCat">املأ اسم القسم بلغة واحدة على الأقل، ويفضل بالثلاث لغات حتى يظهر مترجمًا عند تبديل اللغة.</div>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="cancelCatBtn">إلغاء</button>
       <button class="btn btn-primary" id="saveCatBtn">حفظ</button>
     </div>
   </div>
 </div>
- 
+
 <div class="overlay" id="headerOverlay">
   <div class="modal">
     <h3 id="headerModalTitle">بيانات المقهى</h3>
     <div class="field"><label id="hNameLabel">اسم المقهى</label><input id="hNameInput" type="text"></div>
-    <div class="field"><label id="hTaglineLabel">الشعار الفرعي</label><input id="hTaglineInput" type="text"></div>
+
+    <div class="lang-tabs" id="headerLangTabs">
+      <div class="lang-tab" data-lang="ar" id="hTabAr">AR</div>
+      <div class="lang-tab" data-lang="fr" id="hTabFr">FR</div>
+      <div class="lang-tab" data-lang="en" id="hTabEn">EN</div>
+    </div>
+
+    <div class="lang-field-group" data-lang="ar">
+      <div class="field"><label id="hTaglineLabelAr">الشعار الفرعي (عربي)</label><input id="hTaglineAr" type="text"></div>
+    </div>
+    <div class="lang-field-group" data-lang="fr">
+      <div class="field"><label id="hTaglineLabelFr">الشعار الفرعي (فرنسي)</label><input id="hTaglineFr" type="text"></div>
+    </div>
+    <div class="lang-field-group" data-lang="en">
+      <div class="field"><label id="hTaglineLabelEn">الشعار الفرعي (إنجليزي)</label><input id="hTaglineEn" type="text"></div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn btn-secondary" id="cancelHeaderBtn">إلغاء</button>
       <button class="btn btn-primary" id="saveHeaderBtn">حفظ</button>
     </div>
   </div>
 </div>
- 
+
 <div class="overlay" id="themeOverlay">
   <div class="modal">
     <h3 id="appearanceModalTitle">المظهر</h3>
@@ -476,16 +538,16 @@
     </div>
   </div>
 </div>
- 
+
 <input type="file" id="fileInput" accept="image/*" style="display:none;">
 
 <div class="overlay" id="imgLightbox">
   <button type="button" class="lightbox-close" id="lightboxClose">✕</button>
   <img class="lightbox-content" id="lightboxImg" src="" alt="">
 </div>
- 
+
 <div class="toast" id="toast"></div>
- 
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const ADMIN_PASSWORD = "ozm.2026";
@@ -512,7 +574,6 @@ const UI = {
   appearanceTitle: { ar:"المظهر", fr:"Apparence", en:"Appearance" },
   langBtnTitle: { ar:"تغيير اللغة", fr:"Changer de langue", en:"Change language" },
   passwordLabel: { ar:"كلمة السر", fr:"Mot de passe", en:"Password" },
-  passwordHint: { ar:"كلمة السر الافتراضية: cafe2026 — غيّرها من الكود (ADMIN_PASSWORD).", fr:"Mot de passe par défaut : cafe2026 — modifiez-le dans le code (ADMIN_PASSWORD).", en:"Default password: cafe2026 — change it in the code (ADMIN_PASSWORD)." },
   cancel: { ar:"إلغاء", fr:"Annuler", en:"Cancel" },
   login: { ar:"دخول", fr:"Connexion", en:"Login" },
   save: { ar:"حفظ", fr:"Enregistrer", en:"Save" },
@@ -531,16 +592,15 @@ const UI = {
   delete: { ar:"حذف", fr:"Supprimer", en:"Delete" },
   itemModalTitleEdit: { ar:"تعديل الصنف", fr:"Modifier l'article", en:"Edit item" },
   itemModalTitleAdd: { ar:"إضافة صنف جديد", fr:"Ajouter un article", en:"Add new item" },
-  nameLabel: { ar:"الاسم", fr:"Nom", en:"Name" },
-  descLabel: { ar:"الوصف", fr:"Description", en:"Description" },
   priceLabel: { ar:"السعر", fr:"Prix", en:"Price" },
   pricePlaceholder: { ar:"مثال: 18 درهم", fr:"ex : 18 DH", en:"e.g. 18 DH" },
   availableLabel: { ar:"متوفر ويظهر للزبون", fr:"Disponible et visible par le client", en:"Available and visible to customers" },
   imgHint: { ar:"لإضافة أو تغيير الصورة: أغلق هذه النافذة واسحب الصورة مباشرة فوق صورة الصنف في البطاقة، أو اضغط عليها لاختيار صورة من جهازك.", fr:"Pour ajouter ou changer l'image : fermez cette fenêtre puis glissez une image sur la photo de l'article, ou cliquez dessus pour en choisir une.", en:"To add or change the image: close this window and drag an image onto the item's photo, or click it to pick a file." },
+  langHintItem: { ar:"املأ اسم الصنف بلغة واحدة على الأقل، ويفضل بالثلاث لغات حتى يظهر مترجمًا عند تبديل اللغة.", fr:"Renseignez le nom dans au moins une langue, idéalement les trois, pour qu'il s'affiche traduit lors du changement de langue.", en:"Fill in the name in at least one language, ideally all three, so it shows translated when switching language." },
   catModalTitle: { ar:"اسم القسم", fr:"Nom de la catégorie", en:"Category name" },
   catModalTitleEdit: { ar:"تعديل القسم", fr:"Modifier la catégorie", en:"Edit category" },
-  catPlaceholder: { ar:"مثال: قهوة باردة", fr:"ex : Boissons froides", en:"e.g. Cold Drinks" },
   catImgHint: { ar:"لإضافة أو تغيير صورة القسم: أغلق هذه النافذة واضغط على أيقونة القسم في الشريط، أو اسحب صورة فوقها.", fr:"Pour ajouter ou changer l'image de la catégorie : fermez cette fenêtre puis cliquez sur son icône dans la barre, ou glissez une image dessus.", en:"To add or change the category image: close this window and click its icon in the strip, or drag an image onto it." },
+  langHintCat: { ar:"املأ اسم القسم بلغة واحدة على الأقل، ويفضل بالثلاث لغات حتى يظهر مترجمًا عند تبديل اللغة.", fr:"Renseignez le nom dans au moins une langue, idéalement les trois.", en:"Fill in the category name in at least one language, ideally all three." },
   editCategory: { ar:"تعديل القسم", fr:"Modifier la catégorie", en:"Edit category" },
   toggleCategoryVisibility: { ar:"إخفاء / إظهار القسم", fr:"Masquer / afficher la catégorie", en:"Hide / show category" },
   moveCategoryPrev: { ar:"نقل القسم للخلف", fr:"Déplacer la catégorie vers l'arrière", en:"Move category back" },
@@ -550,14 +610,13 @@ const UI = {
   toastCategoryShown: { ar:"القسم ظاهر الآن للزبون", fr:"La catégorie est maintenant visible", en:"Category is now visible to customers" },
   headerModalTitle: { ar:"بيانات المقهى", fr:"Informations du café", en:"Café info" },
   cafeNameLabel: { ar:"اسم المقهى", fr:"Nom du café", en:"Café name" },
-  taglineLabel: { ar:"الشعار الفرعي", fr:"Slogan", en:"Tagline" },
   colorsLabel: { ar:"الألوان", fr:"Couleurs", en:"Colors" },
   bgLabel: { ar:"الخلفية", fr:"Arrière-plan", en:"Background" },
   toastSaved: { ar:"تم الحفظ ✓", fr:"Enregistré ✓", en:"Saved ✓" },
   toastSaveFailed: { ar:"تعذّر الحفظ، حاول مرة أخرى", fr:"Échec de l'enregistrement, réessayez", en:"Save failed, please try again" },
   toastSaveFailedImg: { ar:"تعذّر الحفظ، الصورة قد تكون كبيرة الحجم", fr:"Échec de l'enregistrement, l'image est peut-être trop lourde", en:"Save failed, the image may be too large" },
-  toastFieldsRequired: { ar:"الاسم والسعر مطلوبان", fr:"Le nom et le prix sont requis", en:"Name and price are required" },
-  toastCatNameRequired: { ar:"اكتب اسم القسم", fr:"Écrivez le nom de la catégorie", en:"Enter a category name" },
+  toastFieldsRequired: { ar:"الاسم (بلغة واحدة على الأقل) والسعر مطلوبان", fr:"Le nom (dans au moins une langue) et le prix sont requis", en:"Name (in at least one language) and price are required" },
+  toastCatNameRequired: { ar:"اكتب اسم القسم بلغة واحدة على الأقل", fr:"Écrivez le nom de la catégorie dans au moins une langue", en:"Enter a category name in at least one language" },
   toastCantDeleteLast: { ar:"لا يمكن حذف آخر قسم", fr:"Impossible de supprimer la dernière catégorie", en:"Can't delete the last category" },
   toastItemShown: { ar:"الصنف ظاهر الآن للزبون", fr:"L'article est maintenant visible", en:"Item is now visible to customers" },
   toastItemHidden: { ar:"تم إخفاء الصنف عن الزبون", fr:"L'article a été masqué", en:"Item hidden from customers" },
@@ -773,6 +832,9 @@ let activeCatId = null;
 let editingItem = { catId: null, itemId: null };
 let editingCat = null; // null = adding new category, else id of category being edited
 let currentImageTarget = null; // {type:'item'|'category'|'logo', catId, itemId}
+let itemModalTab = "ar";
+let catModalTab = "ar";
+let headerModalTab = "ar";
 
 const $ = (id) => document.getElementById(id);
 
@@ -811,12 +873,11 @@ function applyLang(){
   $("editHeaderBtn").textContent = t("editHeaderBtn");
   $("addCatBtn").textContent = t("addCategory");
   $("delCatBtn").textContent = t("deleteCategory");
-  $("fNameLabel").textContent = t("nameLabel");
-  $("fDescLabel").textContent = t("descLabel");
   $("fPriceLabel").textContent = t("priceLabel");
   $("fPrice").placeholder = t("pricePlaceholder");
   $("fAvailableLabel").textContent = t("availableLabel");
   $("imgHint").textContent = t("imgHint");
+  $("langHintItem").textContent = t("langHintItem");
   $("cancelItemBtn").textContent = t("cancel");
   $("saveItemBtn").textContent = t("save");
   $("passModalTitle").textContent = t("ownerLoginTitle");
@@ -824,13 +885,12 @@ function applyLang(){
   $("cancelPassBtn").textContent = t("cancel");
   $("confirmPassBtn").textContent = t("login");
   $("catModalTitle").textContent = editingCat ? t("catModalTitleEdit") : t("catModalTitle");
-  $("catNameInput").placeholder = t("catPlaceholder");
   $("catImgHint").textContent = t("catImgHint");
+  $("langHintCat").textContent = t("langHintCat");
   $("cancelCatBtn").textContent = t("cancel");
   $("saveCatBtn").textContent = t("save");
   $("headerModalTitle").textContent = t("headerModalTitle");
   $("hNameLabel").textContent = t("cafeNameLabel");
-  $("hTaglineLabel").textContent = t("taglineLabel");
   $("cancelHeaderBtn").textContent = t("cancel");
   $("saveHeaderBtn").textContent = t("save");
   $("appearanceModalTitle").textContent = t("appearanceTitle");
@@ -1048,13 +1108,13 @@ function renderItems(){
     const card = document.createElement("div");
     card.className = "item-card" + (item.available === false ? " unavailable" : "");
     card.style.animationDelay = Math.min(idx*0.07, 0.4)+"s";
- 
+
     const hasImg = !!item.image;
     const imgBoxClass = "item-img" + (hasImg ? " has-img" : "") + (isAdmin ? " dropzone" : "");
     const imgInner = hasImg
       ? `<img src="${escapeAttr(item.image)}" alt="">`
       : `<div class="img-placeholder"><span>${isAdmin ? "📷" : "☕"}</span>${isAdmin ? "<small>+</small>" : ""}</div>`;
- 
+
     card.innerHTML = `
       ${item.available === false ? `<div class="unavailable-badge">${escapeHtml(t("unavailableBadge"))}</div>` : ""}
       <div class="${imgBoxClass}" style="animation-delay:${(idx*0.07+0.08)}s">
@@ -1074,7 +1134,7 @@ function renderItems(){
         </div>` : ""}
       </div>
     `;
- 
+
     if(isAdmin){
       const imgBox = card.querySelector(".item-img");
       imgBox.onclick = ()=> openFilePicker(cat.id, item.id);
@@ -1301,37 +1361,70 @@ function resizeImageFile(file, maxDim, quality){
   });
 }
 
+/* ---- generic language-tab modal helper ---- */
+function setupLangTabs(tabsContainerId, groupsSelector, initialLang, onChange){
+  const container = $(tabsContainerId);
+  const groups = document.querySelectorAll(groupsSelector);
+  function activate(lang){
+    container.querySelectorAll(".lang-tab").forEach(tab=>{
+      tab.classList.toggle("active", tab.dataset.lang === lang);
+    });
+    groups.forEach(g=>{
+      g.classList.toggle("active", g.dataset.lang === lang);
+    });
+    if(onChange) onChange(lang);
+  }
+  container.querySelectorAll(".lang-tab").forEach(tab=>{
+    tab.onclick = ()=> activate(tab.dataset.lang);
+  });
+  activate(initialLang);
+}
+function markFilledTabs(tabsContainerId, values){
+  // values: {ar: bool, fr: bool, en: bool}
+  const container = $(tabsContainerId);
+  container.querySelectorAll(".lang-tab").forEach(tab=>{
+    tab.classList.toggle("filled", !!values[tab.dataset.lang]);
+  });
+}
+
 /* ---- item text modal ---- */
 function openItemModal(catId, itemId){
   editingItem = { catId, itemId };
   const cat = menuData.categories.find(c=>c.id===catId);
   const item = itemId ? cat.items.find(i=>i.id===itemId) : null;
   $("itemModalTitle").textContent = item ? t("itemModalTitleEdit") : t("itemModalTitleAdd");
-  $("fName").value = item ? pick(item.name) : "";
-  $("fDesc").value = item ? pick(item.desc) : "";
+
+  const name = item && typeof item.name === "object" ? item.name : {};
+  const desc = item && typeof item.desc === "object" ? item.desc : {};
+  $("fNameAr").value = name.ar || (typeof item?.name === "string" ? item.name : "") || "";
+  $("fNameFr").value = name.fr || "";
+  $("fNameEn").value = name.en || "";
+  $("fDescAr").value = desc.ar || (typeof item?.desc === "string" ? item.desc : "") || "";
+  $("fDescFr").value = desc.fr || "";
+  $("fDescEn").value = desc.en || "";
   $("fPrice").value = item ? item.price : "";
   $("fAvailable").checked = item ? item.available !== false : true;
+
+  itemModalTab = currLang;
+  setupLangTabs("itemLangTabs", "#itemOverlay .lang-field-group", itemModalTab, (l)=>{ itemModalTab = l; });
+  markFilledTabs("itemLangTabs", { ar: !!$("fNameAr").value, fr: !!$("fNameFr").value, en: !!$("fNameEn").value });
   $("itemOverlay").classList.add("show");
 }
 $("cancelItemBtn").onclick = ()=> $("itemOverlay").classList.remove("show");
 $("saveItemBtn").onclick = async ()=>{
-  const name = $("fName").value.trim();
-  const desc = $("fDesc").value.trim();
+  const nameObj = { ar: $("fNameAr").value.trim(), fr: $("fNameFr").value.trim(), en: $("fNameEn").value.trim() };
+  const descObj = { ar: $("fDescAr").value.trim(), fr: $("fDescFr").value.trim(), en: $("fDescEn").value.trim() };
   const price = $("fPrice").value.trim();
   const available = $("fAvailable").checked;
-  if(!name || !price){ showToast(t("toastFieldsRequired")); return; }
+  if(!(nameObj.ar || nameObj.fr || nameObj.en) || !price){ showToast(t("toastFieldsRequired")); return; }
   const cat = menuData.categories.find(c=>c.id===editingItem.catId);
   if(editingItem.itemId){
     const item = cat.items.find(i=>i.id===editingItem.itemId);
-    if(typeof item.name !== "object") item.name = {};
-    if(typeof item.desc !== "object") item.desc = {};
-    item.name[currLang] = name;
-    item.desc[currLang] = desc;
+    item.name = nameObj;
+    item.desc = descObj;
     item.price = price;
     item.available = available;
   } else {
-    const nameObj = {}; nameObj[currLang] = name;
-    const descObj = {}; descObj[currLang] = desc;
     cat.items.push({ id: uid("item"), name: nameObj, desc: descObj, price, image:"", available });
   }
   $("itemOverlay").classList.remove("show");
@@ -1358,7 +1451,15 @@ function openCatModal(catId){
   editingCat = catId || null;
   const cat = catId ? menuData.categories.find(c=>c.id===catId) : null;
   $("catModalTitle").textContent = cat ? t("catModalTitleEdit") : t("catModalTitle");
-  $("catNameInput").value = cat ? pick(cat.name) : "";
+
+  const name = cat && typeof cat.name === "object" ? cat.name : {};
+  $("catNameAr").value = name.ar || (typeof cat?.name === "string" ? cat.name : "") || "";
+  $("catNameFr").value = name.fr || "";
+  $("catNameEn").value = name.en || "";
+
+  catModalTab = currLang;
+  setupLangTabs("catLangTabs", "#catOverlay .lang-field-group", catModalTab, (l)=>{ catModalTab = l; });
+  markFilledTabs("catLangTabs", { ar: !!$("catNameAr").value, fr: !!$("catNameFr").value, en: !!$("catNameEn").value });
   $("catOverlay").classList.add("show");
 }
 $("addCatBtn").onclick = ()=> openCatModal(null);
@@ -1372,14 +1473,12 @@ $("delCatBtn").onclick = async ()=>{
 };
 $("cancelCatBtn").onclick = ()=>{ editingCat = null; $("catOverlay").classList.remove("show"); };
 $("saveCatBtn").onclick = async ()=>{
-  const name = $("catNameInput").value.trim();
-  if(!name){ showToast(t("toastCatNameRequired")); return; }
+  const nameObj = { ar: $("catNameAr").value.trim(), fr: $("catNameFr").value.trim(), en: $("catNameEn").value.trim() };
+  if(!(nameObj.ar || nameObj.fr || nameObj.en)){ showToast(t("toastCatNameRequired")); return; }
   if(editingCat){
     const cat = menuData.categories.find(c=>c.id===editingCat);
-    if(typeof cat.name !== "object") cat.name = {};
-    cat.name[currLang] = name;
+    cat.name = nameObj;
   } else {
-    const nameObj = {}; nameObj[currLang] = name;
     const newCat = { id: uid("cat"), name: nameObj, items: [], image:"", hidden:false };
     menuData.categories.push(newCat);
     activeCatId = newCat.id;
@@ -1393,14 +1492,24 @@ $("saveCatBtn").onclick = async ()=>{
 /* ---- header modal ---- */
 $("editHeaderBtn").onclick = ()=>{
   $("hNameInput").value = menuData.cafeName;
-  $("hTaglineInput").value = pick(menuData.cafeTagline);
+  const tag = typeof menuData.cafeTagline === "object" ? menuData.cafeTagline : {};
+  $("hTaglineAr").value = tag.ar || (typeof menuData.cafeTagline === "string" ? menuData.cafeTagline : "") || "";
+  $("hTaglineFr").value = tag.fr || "";
+  $("hTaglineEn").value = tag.en || "";
+
+  headerModalTab = currLang;
+  setupLangTabs("headerLangTabs", "#headerOverlay .lang-field-group", headerModalTab, (l)=>{ headerModalTab = l; });
+  markFilledTabs("headerLangTabs", { ar: !!$("hTaglineAr").value, fr: !!$("hTaglineFr").value, en: !!$("hTaglineEn").value });
   $("headerOverlay").classList.add("show");
 };
 $("cancelHeaderBtn").onclick = ()=> $("headerOverlay").classList.remove("show");
 $("saveHeaderBtn").onclick = async ()=>{
   menuData.cafeName = $("hNameInput").value.trim() || menuData.cafeName;
-  if(typeof menuData.cafeTagline !== "object") menuData.cafeTagline = {};
-  menuData.cafeTagline[currLang] = $("hTaglineInput").value.trim();
+  menuData.cafeTagline = {
+    ar: $("hTaglineAr").value.trim(),
+    fr: $("hTaglineFr").value.trim(),
+    en: $("hTaglineEn").value.trim()
+  };
   $("headerOverlay").classList.remove("show");
   render();
   await saveData();
