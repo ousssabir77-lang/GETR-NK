@@ -300,9 +300,10 @@
   .modal h3{ font-family:'Lalezar'; color:var(--gold); font-size:1.5rem; margin-bottom:16px; }
   .field{ margin-bottom:14px; }
   .field label{ display:block; font-size:0.82rem; color:var(--cream-dim); margin-bottom:6px; font-weight:700; }
-  .field input[type=text], .field textarea, .field input[type=password]{
+  .field input[type=text], .field textarea, .field input[type=password], .field input[type=datetime-local]{
     width:100%; background: rgba(0,0,0,0.2); border:1px solid var(--line); color:var(--cream);
     border-radius:10px; padding:10px 12px; font-family:'Tajawal'; font-size:0.95rem;
+    color-scheme: dark;
   }
   .field textarea{ resize:vertical; min-height:50px; }
   .checkbox-row{ display:flex; align-items:center; gap:8px; }
@@ -330,6 +331,24 @@
     display:none; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px;
   }
   .admin-banner.show{ display:flex; }
+
+  .countdown-banner{
+    max-width:900px; margin: 14px auto 0; padding: 12px 18px;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--gold) 20%, transparent), color-mix(in srgb, var(--rust) 20%, transparent));
+    border: 1px solid var(--gold);
+    border-radius: 12px; text-align:center;
+    display:none; flex-wrap:wrap; align-items:center; justify-content:center; gap:12px;
+    animation: popIn .6s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .countdown-banner.show{ display:flex; }
+  .countdown-banner .cd-msg{ font-weight:900; color:var(--gold); font-size:0.95rem; white-space:nowrap; }
+  .countdown-banner .cd-timer{ display:flex; gap:8px; }
+  .countdown-banner .cd-box{
+    background: rgba(0,0,0,0.2); border-radius:8px; padding:5px 10px; min-width:48px;
+    text-align:center;
+  }
+  .countdown-banner .cd-box b{ display:block; font-size:1.05rem; font-family:'Tajawal'; font-weight:900; color:var(--cream); }
+  .countdown-banner .cd-box span{ font-size:0.62rem; color:var(--cream-dim); }
 
   .section-label{ font-weight:900; color:var(--gold); font-size:0.9rem; margin:16px 0 10px; }
   .section-label:first-child{ margin-top:0; }
@@ -365,7 +384,7 @@
     .cat-edit-row{ padding: 0 12px; flex-wrap:wrap; }
     .grid{ gap:14px; }
     .modal{ padding:18px; border-radius:14px; }
-    .field input[type=text], .field textarea, .field input[type=password]{ font-size:16px; }
+    .field input[type=text], .field textarea, .field input[type=password], .field input[type=datetime-local]{ font-size:16px; }
     .icon-btn{ width:38px; height:38px; font-size:1rem; }
     .lang-btn{ height:38px; padding:0 12px; font-size:0.8rem; }
     .cafe-logo-box{ width:42px; height:42px; border-radius:12px; }
@@ -393,6 +412,7 @@
 <header>
   <div class="header-btns">
     <button class="lang-btn" id="langBtn" title="">AR</button>
+    <button class="icon-btn" id="countdownBtn" title="" style="display:none;">⏰</button>
     <button class="icon-btn" id="themeBtn" title="" style="display:none;">🎨</button>
     <button class="icon-btn" id="lockBtn" title="">🔒</button>
   </div>
@@ -408,6 +428,11 @@
 <div class="admin-banner" id="adminBanner">
   <span id="adminBannerText">وضع التعديل مفعّل</span>
   <button class="mini-btn" id="editHeaderBtn">تعديل اسم المقهى</button>
+</div>
+
+<div class="countdown-banner" id="countdownBanner">
+  <span class="cd-msg" id="cdMsg"></span>
+  <div class="cd-timer" id="cdTimer"></div>
 </div>
 
 <div class="cat-strip" id="catStrip"></div>
@@ -539,6 +564,38 @@
   </div>
 </div>
 
+<div class="overlay" id="countdownOverlay">
+  <div class="modal">
+    <h3 id="countdownModalTitle">إعداد العد التنازلي</h3>
+    <div class="field checkbox-row">
+      <input id="cdEnabled" type="checkbox">
+      <label style="margin:0;" id="cdEnabledLabel" for="cdEnabled">تفعيل الإشعار فوق القائمة</label>
+    </div>
+
+    <div class="lang-tabs" id="cdLangTabs">
+      <div class="lang-tab" data-lang="ar" id="cdTabAr">AR</div>
+      <div class="lang-tab" data-lang="fr" id="cdTabFr">FR</div>
+      <div class="lang-tab" data-lang="en" id="cdTabEn">EN</div>
+    </div>
+    <div class="lang-field-group" data-lang="ar">
+      <div class="field"><label id="cdMessageLabelAr">نص الإشعار (عربي)</label><input id="cdMessageAr" type="text"></div>
+    </div>
+    <div class="lang-field-group" data-lang="fr">
+      <div class="field"><label id="cdMessageLabelFr">نص الإشعار (فرنسي)</label><input id="cdMessageFr" type="text"></div>
+    </div>
+    <div class="lang-field-group" data-lang="en">
+      <div class="field"><label id="cdMessageLabelEn">نص الإشعار (إنجليزي)</label><input id="cdMessageEn" type="text"></div>
+    </div>
+
+    <div class="field"><label id="cdDateLabel">تاريخ ووقت الافتتاح</label><input id="cdDateInput" type="datetime-local"></div>
+    <div class="hint" id="cdHint">يظهر الشريط فوق القائمة دون أن يحجبها، ويتحول تلقائيًا إلى رسالة "افتتحنا الآن" عند حلول الموعد.</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelCountdownBtn">إلغاء</button>
+      <button class="btn btn-primary" id="saveCountdownBtn">حفظ</button>
+    </div>
+  </div>
+</div>
+
 <input type="file" id="fileInput" accept="image/*" style="display:none;">
 
 <div class="overlay" id="imgLightbox">
@@ -623,7 +680,18 @@ const UI = {
   toastAdminOn: { ar:"تم تفعيل وضع المالك", fr:"Mode propriétaire activé", en:"Owner mode enabled" },
   toastWrongPassword: { ar:"كلمة السر غير صحيحة", fr:"Mot de passe incorrect", en:"Incorrect password" },
   toastChooseImage: { ar:"الرجاء اختيار ملف صورة", fr:"Veuillez choisir un fichier image", en:"Please choose an image file" },
-  toastImageFailed: { ar:"تعذّر تحميل الصورة", fr:"Échec du chargement de l'image", en:"Couldn't load the image" }
+  toastImageFailed: { ar:"تعذّر تحميل الصورة", fr:"Échec du chargement de l'image", en:"Couldn't load the image" },
+  countdownTitle: { ar:"إعداد العد التنازلي للافتتاح", fr:"Réglage du compte à rebours", en:"Opening countdown settings" },
+  countdownModalTitle: { ar:"إعداد العد التنازلي", fr:"Compte à rebours d'ouverture", en:"Opening Countdown" },
+  cdEnabledLabel: { ar:"تفعيل الإشعار فوق القائمة", fr:"Activer la bannière au-dessus du menu", en:"Enable banner above the menu" },
+  cdDateLabel: { ar:"تاريخ ووقت الافتتاح", fr:"Date et heure d'ouverture", en:"Opening date & time" },
+  cdHint: { ar:"يظهر الشريط فوق القائمة دون أن يحجبها، ويتحول تلقائيًا إلى رسالة \"افتتحنا الآن\" عند حلول الموعد.", fr:"La bannière s'affiche au-dessus du menu sans le masquer, et devient automatiquement « Nous avons ouvert ! » à l'heure prévue.", en:"The banner shows above the menu without covering it, and automatically switches to \"We're open now!\" at the set time." },
+  cdDay: { ar:"يوم", fr:"j", en:"d" },
+  cdHour: { ar:"ساعة", fr:"h", en:"h" },
+  cdMinute: { ar:"دقيقة", fr:"min", en:"m" },
+  cdSecond: { ar:"ثانية", fr:"s", en:"s" },
+  cdOpenedNow: { ar:"افتتحنا الآن", fr:"Nous avons ouvert !", en:"We're open now!" },
+  toastPickDate: { ar:"اختر تاريخ ووقت الافتتاح", fr:"Choisissez la date et l'heure d'ouverture", en:"Pick the opening date and time" }
 };
 function t(key){ return (UI[key] && (UI[key][currLang] || UI[key].ar)) || ""; }
 function pick(field){
@@ -670,6 +738,7 @@ const DEFAULT_DATA = {
   cafeTagline: { ar:"نكهة الأصالة في كل رشفة", fr:"Le goût de l'authenticité à chaque gorgée", en:"The taste of authenticity in every sip" },
   themeId: "sahara",
   bgId: "zellige",
+  countdown: { enabled: false, message: { ar:"الافتتاح قريبًا!", fr:"Ouverture bientôt !", en:"Opening soon!" }, targetDate: "" },
   categories: [
     C("cat-breakfast","وجبات الإفطار","Petit déjeuner","Breakfast",[
       I("b1","إكسبريس","Express","Express","18 DH","سلة خبز وفطائر، جبن، زبدة، مربى، شاي أو قهوة، وعصير برتقال أو جزر","Panier de pain et viennoiseries, fromage, beurre, confiture, thé ou café, jus d'orange ou de carotte","Bread & pastry basket, cheese, butter, jam, tea or coffee, orange or carrot juice"),
@@ -869,6 +938,13 @@ function applyLang(){
   $("langBtn").title = t("langBtnTitle");
   $("themeBtn").title = t("appearanceTitle");
   $("lockBtn").title = t("ownerLoginTitle");
+  $("countdownBtn").title = t("countdownTitle");
+  $("countdownModalTitle").textContent = t("countdownModalTitle");
+  $("cdEnabledLabel").textContent = t("cdEnabledLabel");
+  $("cdDateLabel").textContent = t("cdDateLabel");
+  $("cdHint").textContent = t("cdHint");
+  $("cancelCountdownBtn").textContent = t("cancel");
+  $("saveCountdownBtn").textContent = t("save");
   $("adminBannerText").textContent = t("editModeOn");
   $("editHeaderBtn").textContent = t("editHeaderBtn");
   $("addCatBtn").textContent = t("addCategory");
@@ -913,6 +989,7 @@ function normalizeMenuData(md){
   if(!md.themeId) md.themeId = "sahara";
   if(!md.bgId) md.bgId = "zellige";
   if(md.cafeLogo === undefined) md.cafeLogo = "";
+  if(!md.countdown) md.countdown = { enabled:false, message:{ ar:"الافتتاح قريبًا!", fr:"Ouverture bientôt !", en:"Opening soon!" }, targetDate:"" };
   (md.categories || []).forEach(c=>{
     if(c.image === undefined) c.image = "";
     if(c.hidden === undefined) c.hidden = false;
@@ -999,9 +1076,45 @@ function render(){
   $("cafeNameDisplay").textContent = menuData.cafeName;
   $("cafeTaglineDisplay").textContent = pick(menuData.cafeTagline);
   $("themeBtn").style.display = isAdmin ? "flex" : "none";
+  $("countdownBtn").style.display = isAdmin ? "flex" : "none";
   renderLogo();
   renderCategories();
   renderItems();
+  renderCountdownBanner();
+}
+
+let countdownInterval = null;
+function renderCountdownBanner(){
+  const cd = menuData.countdown || { enabled:false };
+  const banner = $("countdownBanner");
+  if(countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
+  if(!cd.enabled || !cd.targetDate){
+    banner.classList.remove("show");
+    return;
+  }
+  const target = new Date(cd.targetDate).getTime();
+  function tick(){
+    $("cdMsg").textContent = pick(cd.message) || t("cdOpenedNow");
+    const diff = target - Date.now();
+    if(diff <= 0){
+      $("cdTimer").innerHTML = `<div class="cd-box"><b>🎉</b><span>${escapeHtml(t("cdOpenedNow"))}</span></div>`;
+      if(countdownInterval){ clearInterval(countdownInterval); countdownInterval = null; }
+      return;
+    }
+    const days = Math.floor(diff/(1000*60*60*24));
+    const hours = Math.floor((diff/(1000*60*60))%24);
+    const mins = Math.floor((diff/(1000*60))%60);
+    const secs = Math.floor((diff/1000)%60);
+    $("cdTimer").innerHTML = `
+      <div class="cd-box"><b>${days}</b><span>${escapeHtml(t("cdDay"))}</span></div>
+      <div class="cd-box"><b>${hours}</b><span>${escapeHtml(t("cdHour"))}</span></div>
+      <div class="cd-box"><b>${mins}</b><span>${escapeHtml(t("cdMinute"))}</span></div>
+      <div class="cd-box"><b>${secs}</b><span>${escapeHtml(t("cdSecond"))}</span></div>
+    `;
+  }
+  banner.classList.add("show");
+  tick();
+  countdownInterval = setInterval(tick, 1000);
 }
 
 function renderLogo(){
@@ -1558,6 +1671,34 @@ function renderBgGrid(){
 }
 $("themeBtn").onclick = ()=>{ renderThemeGrid(); renderBgGrid(); $("themeOverlay").classList.add("show"); };
 $("closeThemeBtn").onclick = ()=> $("themeOverlay").classList.remove("show");
+
+/* ---- countdown modal ---- */
+let countdownModalTab = "ar";
+$("countdownBtn").onclick = ()=>{
+  const cd = menuData.countdown || { enabled:false, message:{}, targetDate:"" };
+  $("cdEnabled").checked = !!cd.enabled;
+  const msg = typeof cd.message === "object" ? cd.message : {};
+  $("cdMessageAr").value = msg.ar || (typeof cd.message === "string" ? cd.message : "") || "";
+  $("cdMessageFr").value = msg.fr || "";
+  $("cdMessageEn").value = msg.en || "";
+  $("cdDateInput").value = cd.targetDate || "";
+
+  countdownModalTab = currLang;
+  setupLangTabs("cdLangTabs", "#countdownOverlay .lang-field-group", countdownModalTab, (l)=>{ countdownModalTab = l; });
+  markFilledTabs("cdLangTabs", { ar: !!$("cdMessageAr").value, fr: !!$("cdMessageFr").value, en: !!$("cdMessageEn").value });
+  $("countdownOverlay").classList.add("show");
+};
+$("cancelCountdownBtn").onclick = ()=> $("countdownOverlay").classList.remove("show");
+$("saveCountdownBtn").onclick = async ()=>{
+  const enabled = $("cdEnabled").checked;
+  const messageObj = { ar: $("cdMessageAr").value.trim(), fr: $("cdMessageFr").value.trim(), en: $("cdMessageEn").value.trim() };
+  const targetDate = $("cdDateInput").value;
+  if(enabled && !targetDate){ showToast(t("toastPickDate")); return; }
+  menuData.countdown = { enabled, message: messageObj, targetDate };
+  $("countdownOverlay").classList.remove("show");
+  renderCountdownBanner();
+  await saveData();
+};
 
 /* ---- admin login ---- */
 $("lockBtn").onclick = ()=>{
