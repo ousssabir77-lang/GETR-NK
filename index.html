@@ -350,6 +350,64 @@
   .countdown-banner .cd-box b{ display:block; font-size:1.05rem; font-family:'Tajawal'; font-weight:900; color:var(--cream); }
   .countdown-banner .cd-box span{ font-size:0.62rem; color:var(--cream-dim); }
 
+  /* menu chooser (landing) */
+  .menu-choice{
+    position:relative; z-index:2; display:none; flex-direction:column; align-items:center;
+    max-width:900px; margin:0 auto; padding: 36px 20px 20px;
+  }
+  body.on-landing .menu-choice{ display:flex; }
+  body.on-landing .cat-strip,
+  body.on-landing .cat-edit-row,
+  body.on-landing main,
+  body.on-landing .menu-switch{ display:none !important; }
+  .choice-title{
+    font-family:'Lalezar', sans-serif; font-size:1.7rem; color:var(--gold); margin-bottom:22px; text-align:center;
+    animation: popIn .6s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .choice-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:18px; width:100%; max-width:640px; }
+  .choice-card{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    padding: 34px 18px; border-radius:22px; cursor:pointer; text-align:center;
+    background: linear-gradient(180deg, var(--surface), var(--surface-2));
+    border:1px solid var(--line); color:var(--cream); box-shadow: var(--shadow);
+    font-family:'Tajawal'; transition: transform .2s, border-color .2s;
+    animation: popIn .6s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .choice-card:nth-child(2){ animation-delay:.12s; }
+  .choice-card:hover{ transform: translateY(-4px); border-color: var(--gold); }
+  .choice-card:active{ transform: scale(.97); }
+  .choice-media{
+    width:92px; height:92px; border-radius:24px; overflow:hidden; flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center; font-size:3rem; line-height:1;
+    background: rgba(244,234,217,0.06); position:relative;
+  }
+  .choice-media img{ width:100%; height:100%; object-fit:cover; }
+  .choice-media.editable{ border:1px dashed var(--line); cursor:pointer; }
+  .choice-media.has-img{ border-style:solid; }
+  .choice-media.dragover{ border-color: var(--gold); background: color-mix(in srgb, var(--gold) 15%, transparent); }
+  .choice-admin{ display:none; gap:6px; margin-top:6px; flex-wrap:wrap; justify-content:center; }
+  .choice-name{ font-weight:900; font-size:1.2rem; color:var(--gold); }
+  .choice-desc{ font-size:0.8rem; color:var(--cream-dim); line-height:1.5; }
+  .menu-switch{
+    position:relative; z-index:2; display:flex; justify-content:center; gap:6px;
+    max-width:900px; margin: 18px auto 0; padding: 0 20px;
+  }
+  .menu-pill{
+    flex:1; max-width:220px; padding:10px 14px; border-radius:999px; cursor:pointer;
+    background: var(--surface); border:1px solid var(--line); color:var(--cream-dim);
+    font-family:'Tajawal'; font-weight:900; font-size:0.9rem; transition: all .2s;
+  }
+  .menu-pill.active{
+    background: linear-gradient(135deg, var(--gold), color-mix(in srgb, var(--gold) 70%, black));
+    color:#241712; border-color: transparent; box-shadow: var(--shadow);
+  }
+  @media (max-width:480px){
+    .choice-grid{ gap:12px; }
+    .choice-card{ padding: 26px 10px; }
+    .choice-media{ width:72px; height:72px; border-radius:20px; font-size:2.3rem; }
+    .choice-name{ font-size:1.05rem; }
+  }
+
   .section-label{ font-weight:900; color:var(--gold); font-size:0.9rem; margin:16px 0 10px; }
   .section-label:first-child{ margin-top:0; }
   .theme-grid, .bg-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:10px; margin-bottom:6px; }
@@ -406,7 +464,7 @@
   }
 </style>
 </head>
-<body>
+<body class="on-landing">
 <div class="bg-texture pat-beans" id="bgTexture"></div>
 
 <header>
@@ -433,6 +491,35 @@
 <div class="countdown-banner" id="countdownBanner">
   <span class="cd-msg" id="cdMsg"></span>
   <div class="cd-timer" id="cdTimer"></div>
+</div>
+
+<div class="menu-choice" id="menuChoice">
+  <div class="choice-title" id="choiceTitle">اختر القائمة</div>
+  <div class="choice-grid">
+    <div class="choice-card" id="chooseCafe" role="button" tabindex="0">
+      <div class="choice-media" id="chooseCafeMedia">☕</div>
+      <span class="choice-name" id="chooseCafeName">قائمة المقهى</span>
+      <span class="choice-desc" id="chooseCafeDesc"></span>
+      <div class="choice-admin" id="chooseCafeAdmin">
+        <button type="button" class="mini-btn" id="chooseCafeImgBtn"></button>
+        <button type="button" class="mini-btn" id="chooseCafeNameBtn"></button>
+      </div>
+    </div>
+    <div class="choice-card" id="chooseSnack" role="button" tabindex="0">
+      <div class="choice-media" id="chooseSnackMedia">🥪</div>
+      <span class="choice-name" id="chooseSnackName">قائمة السناك</span>
+      <span class="choice-desc" id="chooseSnackDesc"></span>
+      <div class="choice-admin" id="chooseSnackAdmin">
+        <button type="button" class="mini-btn" id="chooseSnackImgBtn"></button>
+        <button type="button" class="mini-btn" id="chooseSnackNameBtn"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="menu-switch" id="menuSwitch">
+  <button type="button" class="menu-pill" id="pillCafe"></button>
+  <button type="button" class="menu-pill" id="pillSnack"></button>
 </div>
 
 <div class="cat-strip" id="catStrip"></div>
@@ -596,6 +683,31 @@
   </div>
 </div>
 
+<div class="overlay" id="menuNameOverlay">
+  <div class="modal">
+    <h3 id="menuNameModalTitle">اسم القائمة</h3>
+    <div class="lang-tabs" id="menuNameLangTabs">
+      <div class="lang-tab" data-lang="ar">AR</div>
+      <div class="lang-tab" data-lang="fr">FR</div>
+      <div class="lang-tab" data-lang="en">EN</div>
+    </div>
+    <div class="lang-field-group" data-lang="ar">
+      <div class="field"><label>الاسم (عربي)</label><input id="menuNameAr" type="text"></div>
+    </div>
+    <div class="lang-field-group" data-lang="fr">
+      <div class="field"><label>الاسم (فرنسي)</label><input id="menuNameFr" type="text"></div>
+    </div>
+    <div class="lang-field-group" data-lang="en">
+      <div class="field"><label>الاسم (إنجليزي)</label><input id="menuNameEn" type="text"></div>
+    </div>
+    <div class="hint" id="menuNameHint"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="cancelMenuNameBtn">إلغاء</button>
+      <button class="btn btn-primary" id="saveMenuNameBtn">حفظ</button>
+    </div>
+  </div>
+</div>
+
 <input type="file" id="fileInput" accept="image/*" style="display:none;">
 
 <div class="overlay" id="imgLightbox">
@@ -691,7 +803,16 @@ const UI = {
   cdMinute: { ar:"دقيقة", fr:"min", en:"m" },
   cdSecond: { ar:"ثانية", fr:"s", en:"s" },
   cdOpenedNow: { ar:"افتتحنا الآن", fr:"Nous avons ouvert !", en:"We're open now!" },
-  toastPickDate: { ar:"اختر تاريخ ووقت الافتتاح", fr:"Choisissez la date et l'heure d'ouverture", en:"Pick the opening date and time" }
+  toastPickDate: { ar:"اختر تاريخ ووقت الافتتاح", fr:"Choisissez la date et l'heure d'ouverture", en:"Pick the opening date and time" },
+  menuImageBtn: { ar:"📷 الصورة", fr:"📷 Image", en:"📷 Image" },
+  menuNameBtn: { ar:"✎ الاسم", fr:"✎ Nom", en:"✎ Name" },
+  menuNameModalTitle: { ar:"اسم القائمة", fr:"Nom du menu", en:"Menu name" },
+  menuNameHint: { ar:"اترك الحقول فارغة للرجوع إلى الاسم الافتراضي.", fr:"Laissez vide pour revenir au nom par défaut.", en:"Leave empty to go back to the default name." },
+  chooseMenuTitle: { ar:"اختر القائمة", fr:"Choisissez votre menu", en:"Choose your menu" },
+  cafeMenuName: { ar:"قائمة المقهى", fr:"Menu Café", en:"Café Menu" },
+  cafeMenuDesc: { ar:"قهوة، عصائر، فطور وحلويات", fr:"Café, jus, petit déjeuner et douceurs", en:"Coffee, juices, breakfast & sweets" },
+  snackMenuName: { ar:"قائمة السناك", fr:"Menu Snack", en:"Snack Menu" },
+  snackMenuDesc: { ar:"ساندويتشات، برغر، بيتزا ووجبات خفيفة", fr:"Sandwichs, burgers, pizzas et en-cas", en:"Sandwiches, burgers, pizza & light bites" }
 };
 function t(key){ return (UI[key] && (UI[key][currLang] || UI[key].ar)) || ""; }
 function pick(field){
@@ -731,6 +852,14 @@ function C(id, name_ar, name_fr, name_en, items){
   return { id, name:{ar:name_ar, fr:name_fr, en:name_en}, items, image:"", hidden:false };
 }
 
+/* ---------- default snack menu (empty categories, owner fills items) ---------- */
+const DEFAULT_SNACK = [
+  C("snack-sandwich","ساندويتشات","Sandwichs","Sandwiches",[]),
+  C("snack-burger","برغر","Burgers","Burgers",[]),
+  C("snack-pizza","بيتزا","Pizzas","Pizza",[]),
+  C("snack-bites","وجبات خفيفة","En-cas","Snacks & Sides",[])
+];
+
 /* ---------- full GETRÄNK menu ---------- */
 const DEFAULT_DATA = {
   cafeName: "GETRÄNK",
@@ -739,6 +868,7 @@ const DEFAULT_DATA = {
   themeId: "sahara",
   bgId: "zellige",
   countdown: { enabled: false, message: { ar:"الافتتاح قريبًا!", fr:"Ouverture bientôt !", en:"Opening soon!" }, targetDate: "" },
+  snackCategories: DEFAULT_SNACK,
   categories: [
     C("cat-breakfast","وجبات الإفطار","Petit déjeuner","Breakfast",[
       I("b1","إكسبريس","Express","Express","18 DH","سلة خبز وفطائر، جبن، زبدة، مربى، شاي أو قهوة، وعصير برتقال أو جزر","Panier de pain et viennoiseries, fromage, beurre, confiture, thé ou café, jus d'orange ou de carotte","Bread & pastry basket, cheese, butter, jam, tea or coffee, orange or carrot juice"),
@@ -896,6 +1026,9 @@ const DEFAULT_DATA = {
 };
 
 let menuData = null;
+let activeMenu = null; // null = chooser screen, 'cafe' | 'snack'
+function cats(){ return activeMenu === "snack" ? menuData.snackCategories : menuData.categories; }
+function setCats(arr){ if(activeMenu === "snack") menuData.snackCategories = arr; else menuData.categories = arr; }
 let isAdmin = false;
 let activeCatId = null;
 let editingItem = { catId: null, itemId: null };
@@ -938,6 +1071,11 @@ function applyLang(){
   $("langBtn").title = t("langBtnTitle");
   $("themeBtn").title = t("appearanceTitle");
   $("lockBtn").title = t("ownerLoginTitle");
+  $("choiceTitle").textContent = t("chooseMenuTitle");
+  $("menuNameModalTitle").textContent = t("menuNameModalTitle");
+  $("menuNameHint").textContent = t("menuNameHint");
+  $("cancelMenuNameBtn").textContent = t("cancel");
+  $("saveMenuNameBtn").textContent = t("save");
   $("countdownBtn").title = t("countdownTitle");
   $("countdownModalTitle").textContent = t("countdownModalTitle");
   $("cdEnabledLabel").textContent = t("cdEnabledLabel");
@@ -989,8 +1127,13 @@ function normalizeMenuData(md){
   if(!md.themeId) md.themeId = "sahara";
   if(!md.bgId) md.bgId = "zellige";
   if(md.cafeLogo === undefined) md.cafeLogo = "";
+  if(!md.menuMeta) md.menuMeta = {};
+  ["cafe","snack"].forEach(k=>{
+    if(!md.menuMeta[k]) md.menuMeta[k] = { name:{ ar:"", fr:"", en:"" }, image:"" };
+  });
+  if(!md.snackCategories) md.snackCategories = JSON.parse(JSON.stringify(DEFAULT_SNACK));
   if(!md.countdown) md.countdown = { enabled:false, message:{ ar:"الافتتاح قريبًا!", fr:"Ouverture bientôt !", en:"Opening soon!" }, targetDate:"" };
-  (md.categories || []).forEach(c=>{
+  (md.categories || []).concat(md.snackCategories || []).forEach(c=>{
     if(c.image === undefined) c.image = "";
     if(c.hidden === undefined) c.hidden = false;
   });
@@ -998,15 +1141,15 @@ function normalizeMenuData(md){
 }
 
 function visibleCategories(){
-  return isAdmin ? menuData.categories : menuData.categories.filter(c=>!c.hidden);
+  return isAdmin ? cats() : cats().filter(c=>!c.hidden);
 }
 async function moveCategory(catId, direction){
-  const idx = menuData.categories.findIndex(c=>c.id===catId);
+  const idx = cats().findIndex(c=>c.id===catId);
   if(idx === -1) return;
   const newIdx = idx + direction;
-  if(newIdx < 0 || newIdx >= menuData.categories.length) return;
-  const [cat] = menuData.categories.splice(idx, 1);
-  menuData.categories.splice(newIdx, 0, cat);
+  if(newIdx < 0 || newIdx >= cats().length) return;
+  const [cat] = cats().splice(idx, 1);
+  cats().splice(newIdx, 0, cat);
   render();
   await saveData();
 }
@@ -1030,8 +1173,8 @@ async function loadData(){
     menuData = normalizeMenuData(DEFAULT_DATA);
     try{ await saveData(false); }catch(e2){}
   }
-  const vis = menuData.categories.filter(c=>!c.hidden);
-  activeCatId = vis[0] ? vis[0].id : (menuData.categories[0] ? menuData.categories[0].id : null);
+  const vis = cats().filter(c=>!c.hidden);
+  activeCatId = vis[0] ? vis[0].id : (cats()[0] ? cats()[0].id : null);
   applyTheme();
   applyLang();
   render();
@@ -1059,9 +1202,9 @@ function subscribeToMenuChanges(){
       (payload)=>{
         if(payload.new && payload.new.data){
           menuData = normalizeMenuData(payload.new.data);
-          const vis = isAdmin ? menuData.categories : menuData.categories.filter(c=>!c.hidden);
+          const vis = isAdmin ? cats() : cats().filter(c=>!c.hidden);
           if(!vis.find(c=>c.id===activeCatId)){
-            activeCatId = vis[0] ? vis[0].id : (menuData.categories[0] ? menuData.categories[0].id : null);
+            activeCatId = vis[0] ? vis[0].id : (cats()[0] ? cats()[0].id : null);
           }
           applyTheme();
           render();
@@ -1078,10 +1221,111 @@ function render(){
   $("themeBtn").style.display = isAdmin ? "flex" : "none";
   $("countdownBtn").style.display = isAdmin ? "flex" : "none";
   renderLogo();
+  renderMenuChoice();
   renderCategories();
   renderItems();
   renderCountdownBanner();
 }
+
+function chooseMenu(key){
+  activeMenu = key;
+  document.body.classList.remove("on-landing");
+  const vis = visibleCategories();
+  activeCatId = vis[0] ? vis[0].id : (cats()[0] ? cats()[0].id : null);
+  render();
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+$("chooseCafe").onclick = ()=> chooseMenu("cafe");
+$("chooseSnack").onclick = ()=> chooseMenu("snack");
+$("pillCafe").onclick = ()=>{ if(activeMenu !== "cafe") chooseMenu("cafe"); };
+$("pillSnack").onclick = ()=>{ if(activeMenu !== "snack") chooseMenu("snack"); };
+
+/* ---- menu cards: custom image + custom name (owner) ---- */
+const MENU_KEYS = { cafe:"Cafe", snack:"Snack" };
+function menuLabel(key){
+  const m = (menuData.menuMeta && menuData.menuMeta[key]) || {};
+  return pick(m.name) || t(key === "snack" ? "snackMenuName" : "cafeMenuName");
+}
+function renderMenuChoice(){
+  Object.keys(MENU_KEYS).forEach(key=>{
+    const cap = MENU_KEYS[key];
+    const meta = menuData.menuMeta[key];
+    const hasImg = !!meta.image;
+    const media = $("choose"+cap+"Media");
+    media.className = "choice-media" + (isAdmin ? " editable" : "") + (hasImg ? " has-img" : "");
+    media.innerHTML = hasImg ? `<img src="${escapeAttr(meta.image)}" alt="">` : (key === "snack" ? "🥪" : "☕");
+    $("choose"+cap+"Name").textContent = menuLabel(key);
+    $("choose"+cap+"Desc").textContent = t(key === "snack" ? "snackMenuDesc" : "cafeMenuDesc");
+    $("choose"+cap+"Admin").style.display = isAdmin ? "flex" : "none";
+    $("choose"+cap+"ImgBtn").textContent = t("menuImageBtn");
+    $("choose"+cap+"NameBtn").textContent = t("menuNameBtn");
+    $("pill"+cap).textContent = (key === "snack" ? "🥪 " : "☕ ") + menuLabel(key);
+    $("pill"+cap).classList.toggle("active", activeMenu === key);
+  });
+}
+function openMenuFilePicker(key){
+  currentImageTarget = { type:"menu", key };
+  $("fileInput").value = "";
+  $("fileInput").click();
+}
+async function handleMenuImageFile(key, file){
+  if(!file.type.startsWith("image/")){ showToast(t("toastChooseImage")); return; }
+  try{
+    const blob = await resizeImageFile(file, 400, 0.8);
+    const path = `menu-${key}-${Date.now()}.jpg`;
+    const { error: upErr } = await sbClient.storage.from(IMAGES_BUCKET).upload(path, blob, {
+      contentType: "image/jpeg",
+      upsert: true
+    });
+    if(upErr){ showToast(t("toastImageFailed")); return; }
+    const { data: pub } = sbClient.storage.from(IMAGES_BUCKET).getPublicUrl(path);
+    menuData.menuMeta[key].image = pub.publicUrl;
+    render();
+    await saveData();
+  }catch(e){
+    showToast(t("toastImageFailed"));
+  }
+}
+let editingMenuKey = null;
+function openMenuNameModal(key){
+  editingMenuKey = key;
+  const name = menuData.menuMeta[key].name || {};
+  $("menuNameAr").value = name.ar || "";
+  $("menuNameFr").value = name.fr || "";
+  $("menuNameEn").value = name.en || "";
+  setupLangTabs("menuNameLangTabs", "#menuNameOverlay .lang-field-group", currLang);
+  markFilledTabs("menuNameLangTabs", { ar: !!name.ar, fr: !!name.fr, en: !!name.en });
+  $("menuNameOverlay").classList.add("show");
+}
+$("cancelMenuNameBtn").onclick = ()=> $("menuNameOverlay").classList.remove("show");
+$("saveMenuNameBtn").onclick = async ()=>{
+  if(!editingMenuKey) return;
+  menuData.menuMeta[editingMenuKey].name = {
+    ar: $("menuNameAr").value.trim(),
+    fr: $("menuNameFr").value.trim(),
+    en: $("menuNameEn").value.trim()
+  };
+  $("menuNameOverlay").classList.remove("show");
+  render();
+  await saveData();
+};
+Object.keys(MENU_KEYS).forEach(key=>{
+  const cap = MENU_KEYS[key];
+  const media = $("choose"+cap+"Media");
+  media.addEventListener("click", (e)=>{ if(isAdmin){ e.stopPropagation(); openMenuFilePicker(key); } });
+  media.addEventListener("dragover", (e)=>{ if(!isAdmin) return; e.preventDefault(); media.classList.add("dragover"); });
+  media.addEventListener("dragleave", ()=> media.classList.remove("dragover"));
+  media.addEventListener("drop", (e)=>{
+    if(!isAdmin) return;
+    e.preventDefault(); e.stopPropagation();
+    media.classList.remove("dragover");
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if(file) handleMenuImageFile(key, file);
+  });
+  $("choose"+cap+"ImgBtn").onclick = (e)=>{ e.stopPropagation(); openMenuFilePicker(key); };
+  $("choose"+cap+"NameBtn").onclick = (e)=>{ e.stopPropagation(); openMenuNameModal(key); };
+  $("choose"+cap).addEventListener("keydown", (e)=>{ if(e.key === "Enter" && e.target === e.currentTarget) chooseMenu(key); });
+});
 
 let countdownInterval = null;
 function renderCountdownBanner(){
@@ -1208,7 +1452,7 @@ function renderCategories(){
 function renderItems(){
   const grid = $("itemsGrid");
   grid.innerHTML = "";
-  const cat = menuData.categories.find(c=>c.id===activeCatId);
+  const cat = cats().find(c=>c.id===activeCatId);
   if(!cat){
     grid.innerHTML = `<div class="empty">${escapeHtml(t("noCategorySelected"))}</div>`;
     return;
@@ -1386,6 +1630,8 @@ $("fileInput").addEventListener("change", (e)=>{
     handleCategoryImageFile(currentImageTarget.catId, file);
   } else if(currentImageTarget.type === "logo"){
     handleLogoImageFile(file);
+  } else if(currentImageTarget.type === "menu"){
+    handleMenuImageFile(currentImageTarget.key, file);
   }
 });
 
@@ -1400,7 +1646,7 @@ async function handleImageFile(catId, itemId, file){
     });
     if(upErr){ showToast(t("toastImageFailed")); return; }
     const { data: pub } = sbClient.storage.from(IMAGES_BUCKET).getPublicUrl(path);
-    const cat = menuData.categories.find(c=>c.id===catId);
+    const cat = cats().find(c=>c.id===catId);
     const item = cat.items.find(i=>i.id===itemId);
     item.image = pub.publicUrl;
     render();
@@ -1421,7 +1667,7 @@ async function handleCategoryImageFile(catId, file){
     });
     if(upErr){ showToast(t("toastImageFailed")); return; }
     const { data: pub } = sbClient.storage.from(IMAGES_BUCKET).getPublicUrl(path);
-    const cat = menuData.categories.find(c=>c.id===catId);
+    const cat = cats().find(c=>c.id===catId);
     cat.image = pub.publicUrl;
     render();
     await saveData();
@@ -1503,7 +1749,7 @@ function markFilledTabs(tabsContainerId, values){
 /* ---- item text modal ---- */
 function openItemModal(catId, itemId){
   editingItem = { catId, itemId };
-  const cat = menuData.categories.find(c=>c.id===catId);
+  const cat = cats().find(c=>c.id===catId);
   const item = itemId ? cat.items.find(i=>i.id===itemId) : null;
   $("itemModalTitle").textContent = item ? t("itemModalTitleEdit") : t("itemModalTitleAdd");
 
@@ -1530,7 +1776,7 @@ $("saveItemBtn").onclick = async ()=>{
   const price = $("fPrice").value.trim();
   const available = $("fAvailable").checked;
   if(!(nameObj.ar || nameObj.fr || nameObj.en) || !price){ showToast(t("toastFieldsRequired")); return; }
-  const cat = menuData.categories.find(c=>c.id===editingItem.catId);
+  const cat = cats().find(c=>c.id===editingItem.catId);
   if(editingItem.itemId){
     const item = cat.items.find(i=>i.id===editingItem.itemId);
     item.name = nameObj;
@@ -1545,13 +1791,13 @@ $("saveItemBtn").onclick = async ()=>{
   await saveData();
 };
 async function deleteItem(catId, itemId){
-  const cat = menuData.categories.find(c=>c.id===catId);
+  const cat = cats().find(c=>c.id===catId);
   cat.items = cat.items.filter(i=>i.id!==itemId);
   render();
   await saveData();
 }
 async function toggleAvailability(catId, itemId){
-  const cat = menuData.categories.find(c=>c.id===catId);
+  const cat = cats().find(c=>c.id===catId);
   const item = cat.items.find(i=>i.id===itemId);
   item.available = item.available === false ? true : false;
   render();
@@ -1562,7 +1808,7 @@ async function toggleAvailability(catId, itemId){
 /* ---- category modal ---- */
 function openCatModal(catId){
   editingCat = catId || null;
-  const cat = catId ? menuData.categories.find(c=>c.id===catId) : null;
+  const cat = catId ? cats().find(c=>c.id===catId) : null;
   $("catModalTitle").textContent = cat ? t("catModalTitleEdit") : t("catModalTitle");
 
   const name = cat && typeof cat.name === "object" ? cat.name : {};
@@ -1577,10 +1823,10 @@ function openCatModal(catId){
 }
 $("addCatBtn").onclick = ()=> openCatModal(null);
 $("delCatBtn").onclick = async ()=>{
-  if(menuData.categories.length <= 1){ showToast(t("toastCantDeleteLast")); return; }
-  menuData.categories = menuData.categories.filter(c=>c.id!==activeCatId);
+  if(cats().length <= 1){ showToast(t("toastCantDeleteLast")); return; }
+  setCats(cats().filter(c=>c.id!==activeCatId));
   const vis = visibleCategories();
-  activeCatId = vis[0] ? vis[0].id : menuData.categories[0].id;
+  activeCatId = vis[0] ? vis[0].id : cats()[0].id;
   render();
   await saveData();
 };
@@ -1589,11 +1835,11 @@ $("saveCatBtn").onclick = async ()=>{
   const nameObj = { ar: $("catNameAr").value.trim(), fr: $("catNameFr").value.trim(), en: $("catNameEn").value.trim() };
   if(!(nameObj.ar || nameObj.fr || nameObj.en)){ showToast(t("toastCatNameRequired")); return; }
   if(editingCat){
-    const cat = menuData.categories.find(c=>c.id===editingCat);
+    const cat = cats().find(c=>c.id===editingCat);
     cat.name = nameObj;
   } else {
     const newCat = { id: uid("cat"), name: nameObj, items: [], image:"", hidden:false };
-    menuData.categories.push(newCat);
+    cats().push(newCat);
     activeCatId = newCat.id;
   }
   editingCat = null;
@@ -1709,7 +1955,7 @@ $("lockBtn").onclick = ()=>{
     $("adminBanner").classList.remove("show");
     const vis = visibleCategories();
     if(!vis.find(c=>c.id===activeCatId)){
-      activeCatId = vis[0] ? vis[0].id : (menuData.categories[0] ? menuData.categories[0].id : null);
+      activeCatId = vis[0] ? vis[0].id : (cats()[0] ? cats()[0].id : null);
     }
     render();
     return;
