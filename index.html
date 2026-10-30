@@ -397,6 +397,7 @@
     background: var(--surface); border:1px solid var(--line); color:var(--cream-dim);
     font-family:'Tajawal'; font-weight:900; font-size:0.9rem; transition: all .2s;
   }
+  .menu-pill{ display:flex; align-items:center; justify-content:center; gap:8px; }
   .menu-pill.active{
     background: linear-gradient(135deg, var(--gold), color-mix(in srgb, var(--gold) 70%, black));
     color:#241712; border-color: transparent; box-shadow: var(--shadow);
@@ -1259,7 +1260,9 @@ function renderMenuChoice(){
     $("choose"+cap+"Admin").style.display = isAdmin ? "flex" : "none";
     $("choose"+cap+"ImgBtn").textContent = t("menuImageBtn");
     $("choose"+cap+"NameBtn").textContent = t("menuNameBtn");
-    $("pill"+cap).textContent = (key === "snack" ? "🥪 " : "☕ ") + menuLabel(key);
+    $("pill"+cap).innerHTML = (hasImg
+      ? `<span class="cat-thumb"><img src="${escapeAttr(meta.image)}" alt=""></span>`
+      : `<span>${key === "snack" ? "🥪" : "☕"}</span>`) + `<span>${escapeHtml(menuLabel(key))}</span>`;
     $("pill"+cap).classList.toggle("active", activeMenu === key);
   });
 }
